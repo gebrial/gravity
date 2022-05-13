@@ -1,10 +1,20 @@
-export const delayMillis = (delayMs: number): Promise<void> => new Promise(resolve => setTimeout(resolve, delayMs));
+import Universe from "./Universe"
+import p5 from "p5"
 
-export const greet = (name: string): string => `Hello ${name}`
+const totalBodies = 100
+const universe = new Universe(totalBodies)
+export const iterateUniverse = (): void => {
+  const sketch = (p: p5) => {
+    p.setup = () => {
+      p.createCanvas(400, 400)
+    }
 
-export const foo = async (): Promise<boolean> => {
-  console.log(greet('World'))
-  await delayMillis(1000)
-  console.log('done')
-  return true
+    p.draw = () => {
+      p.background('#000')
+      universe.step()
+      universe.draw(p)
+    }
+  }
+
+  new p5(sketch)
 }
