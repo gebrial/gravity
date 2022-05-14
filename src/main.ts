@@ -1,7 +1,7 @@
 import Universe from "./Universe"
 import p5 from "p5"
 
-const totalBodies = 100
+const totalBodies = 500
 const universe = new Universe(totalBodies)
 export const iterateUniverse = (): void => {
   const sketch = (p: p5) => {

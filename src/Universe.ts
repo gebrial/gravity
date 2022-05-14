@@ -28,6 +28,56 @@ export default class Universe {
     for (let i = 0; i < this.bodies.length; i++) {
       this.bodies[i].step()
     }
+
+    const bodiesToRemove: Body[] = []
+    const bodiesToAdd: Body[] = []
+    for (let i = 0; i < this.bodies.length; i++) {
+      const body1 = this.bodies[i]
+      if (bodiesToRemove.includes(body1)) {
+        continue
+      }
+      for (let j = i + 1; j < this.bodies.length; j++) {
+        const body2 = this.bodies[j]
+        if (bodiesToRemove.includes(body2)) {
+          continue
+        }
+        const distance = body1.getPosition().dist(body2.getPosition())
+        if (distance < body1.getRadius() + body2.getRadius()) {
+          const newBody = this.mergeBodies(body1, body2)
+          bodiesToRemove.push(body1)
+          bodiesToRemove.push(body2)
+          bodiesToAdd.push(newBody)
+          break
+        }
+      }
+    }
+    bodiesToRemove.forEach(body => {
+      this.bodies.splice(this.bodies.indexOf(body), 1)
+    })
+    this.bodies.push(...bodiesToAdd)
+  }
+
+  /**
+   * Returns a new body object which is the result of merging the two bodies
+   * @param body1
+   * @param body2
+   * @private
+   */
+  private mergeBodies(body1: Body, body2: Body): Body {
+    const body1Mass = body1.getMass()
+    const body2Mass = body2.getMass()
+    const newMass = body1.getMass() + body2.getMass()
+
+    // completely inelastic collision, maximum conversion of kinetic energy to "heat"
+    // position and velocity are weighted by mass of each body
+    const newPosition = body1.getPosition().mult(body1Mass/newMass).add(body2.getPosition().mult(body2Mass/newMass))
+    const newVelocity = body1.getVelocity().mult(body1Mass/newMass).add(body2.getVelocity().mult(body2Mass/newMass))
+
+    const newBody = new Body()
+    newBody.setMass(newMass)
+    newBody.setPosition(newPosition)
+    newBody.setVelocity(newVelocity)
+    return newBody
   }
 
   public draw(p: p5): void {

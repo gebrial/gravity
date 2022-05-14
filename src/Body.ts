@@ -40,12 +40,16 @@ export default class Body {
   }
 
   public step(): void {
-    this.velocity.add(this.force)
+    this.velocity.add(this.force.div(this.mass))
     this.position.add(this.velocity)
     this.force.mult(0)
   }
 
   public draw(p: p5): void {
-    p.ellipse(this.position.x, this.position.y, this.mass * 10, this.mass * 10)
+    p.ellipse(this.position.x, this.position.y, this.getRadius() * 2)
+  }
+
+  public getRadius(): number {
+    return Math.sqrt(this.mass * 10)
   }
 }
