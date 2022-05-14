@@ -12,6 +12,8 @@ export const iterateUniverse = (): void => {
     p.draw = () => {
       p.background('#000')
       universe.step()
+      const centerOfMass = universe.getCenterOfMass()
+      p.translate(new p5.Vector(p.width / 2, p.height / 2, 0).sub(centerOfMass))
       universe.draw(p)
     }
   }

@@ -50,6 +50,6 @@ export default class Body {
   }
 
   public getRadius(): number {
-    return Math.sqrt(this.mass * 10)
+    return Math.pow(this.mass * 10, 1./3)
   }
 }

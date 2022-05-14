@@ -66,7 +66,7 @@ export default class Universe {
   private mergeBodies(body1: Body, body2: Body): Body {
     const body1Mass = body1.getMass()
     const body2Mass = body2.getMass()
-    const newMass = body1.getMass() + body2.getMass()
+    const newMass = body1Mass + body2Mass
 
     // completely inelastic collision, maximum conversion of kinetic energy to "heat"
     // position and velocity are weighted by mass of each body
@@ -84,5 +84,26 @@ export default class Universe {
     for (let i = 0; i < this.bodies.length; i++) {
       this.bodies[i].draw(p)
     }
+  }
+
+  public getCenterOfMass(): p5.Vector {
+    const centerOfMass = new p5.Vector(0, 0)
+    let totalMass = 0
+    for (let i = 0; i < this.bodies.length; i++) {
+      const bodyMass = this.bodies[i].getMass()
+      totalMass += bodyMass
+      centerOfMass.add(this.bodies[i].getPosition().mult(bodyMass))
+    }
+    centerOfMass.div(totalMass)
+    return centerOfMass
+  }
+
+  public getTotalMomentumVector(): p5.Vector {
+    const momentumVector = new p5.Vector(0, 0)
+    for (let i = 0; i < this.bodies.length; i++) {
+      const body = this.bodies[i]
+      momentumVector.add(body.getVelocity().mult(body.getMass()))
+    }
+    return momentumVector
   }
 }
