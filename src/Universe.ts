@@ -98,6 +98,19 @@ export default class Universe {
     return centerOfMass
   }
 
+  /**
+   * Returns the standard deviation of the distance between each body and the center of mass
+   */
+  public getPositionStandardDeviation(): number {
+    const centerOfMass = this.getCenterOfMass()
+    let totalDistance = 0
+    for (let i = 0; i < this.bodies.length; i++) {
+      const distance = this.bodies[i].getPosition().sub(centerOfMass).magSq()
+      totalDistance += distance
+    }
+    return Math.sqrt(totalDistance / this.bodies.length)
+  }
+
   public getTotalMomentumVector(): p5.Vector {
     const momentumVector = new p5.Vector(0, 0)
     for (let i = 0; i < this.bodies.length; i++) {
