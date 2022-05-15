@@ -6,12 +6,48 @@ export default class Universe {
   constructor(totalBodies: number, size: number) {
     for (let i = 0; i < totalBodies; i++) {
       const newBody = new Body()
-      newBody.setPosition(new p5.Vector(Math.random()*size, Math.random()*size, Math.random()*size))
-      newBody.setVelocity(new p5.Vector(Math.random()*2 - 1, Math.random()*2 - 1, Math.random()*2 - 1))
+      let initialPosition
+      do {
+        initialPosition = new p5.Vector(
+          this.random(size),
+          this.random(size/10),
+          this.random(size)
+        )
+      } while (!this.insideEllipsoid(initialPosition, size, size/10, size))
+      newBody.setPosition(initialPosition)
+      newBody.setVelocity(new p5.Vector(
+        this.random(),
+        this.random(),
+        this.random()
+      ))
       newBody.setMass(Math.random())
       this.bodies.push(newBody)
     }
   }
+
+  /**
+   * Returns whether the position is inside the ellipsoid defined by x, y, z centered at 0, 0, 0
+   * @param position
+   * @param x x-radius
+   * @param y y-radius
+   * @param z z-radius
+   * @private
+   */
+  private insideEllipsoid(position: p5.Vector, x: number, y: number, z: number): boolean {
+    const xComponent = position.x * position.x / x / x
+    const yComponent = position.y * position.y / y / y
+    const zComponent = position.z * position.z / z / z
+    return xComponent + yComponent + zComponent <= 1
+  }
+
+  /**
+   * Returns a random number with a maximum magnitude
+   * @param maxMagnitude
+   */
+  private random(maxMagnitude = 1): number {
+    return Math.random() * maxMagnitude * 2 - maxMagnitude
+  }
+
 
   public step(): void {
     for (let i = 0; i < this.bodies.length; i++) {
