@@ -53,7 +53,10 @@ export default class Body {
   }
 
   public draw(p: p5): void {
-    p.ellipse(this.position.x, this.position.y, this.getRadius() * 2)
+    p.push()
+    p.translate(this.position)
+    p.sphere(this.getRadius())
+    p.pop()
   }
 
   public getRadius(): number {

@@ -1,20 +1,23 @@
 import Universe from "./Universe"
 import p5 from "p5"
 
-const totalBodies = 500
+const totalBodies = 200
 const size = 800
 const universe = new Universe(totalBodies, size)
 export const iterateUniverse = (): void => {
   const sketch = (p: p5) => {
     p.setup = () => {
-      p.createCanvas(size, size)
+      p.createCanvas(size, size, p.WEBGL)
     }
 
     p.draw = () => {
-      p.background('#000')
+      p.background(0, 0, 0)
+      p.orbitControl()
       universe.step()
       const centerOfMass = universe.getCenterOfMass()
-      p.translate(new p5.Vector(p.width / 2, p.height / 2, 0).sub(centerOfMass))
+      p.translate(centerOfMass.mult(-1))
+      p.fill(255)
+      p.stroke(255)
       universe.draw(p)
     }
   }

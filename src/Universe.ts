@@ -6,8 +6,8 @@ export default class Universe {
   constructor(totalBodies: number, size: number) {
     for (let i = 0; i < totalBodies; i++) {
       const newBody = new Body()
-      newBody.setPosition(new p5.Vector(Math.random()*size, Math.random()*size))
-      newBody.setVelocity(new p5.Vector(Math.random()*2 - 1, Math.random()*2 - 1))
+      newBody.setPosition(new p5.Vector(Math.random()*size, Math.random()*size, Math.random()*size))
+      newBody.setVelocity(new p5.Vector(Math.random()*2 - 1, Math.random()*2 - 1, Math.random()*2 - 1))
       newBody.setMass(Math.random())
       this.bodies.push(newBody)
     }
