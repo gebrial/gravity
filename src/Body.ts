@@ -5,11 +5,9 @@ import p5 from "p5"
 export default class Body {
   private mass = 1
   private position: p5.Vector = new p5.Vector()
-  private velocity: p5.Vector = new p5.Vector()
+  private previousPosition: p5.Vector = new p5.Vector()
   private force: p5.Vector = new p5.Vector()
-  constructor() {
-    // nothing
-  }
+  private initialStep = true
 
   public getPosition(): p5.Vector {
     return this.position.copy()
@@ -20,11 +18,11 @@ export default class Body {
   }
 
   public getVelocity(): p5.Vector {
-    return this.velocity.copy()
+    return this.position.copy().sub(this.previousPosition)
   }
 
   public setVelocity(velocity: p5.Vector): void {
-    this.velocity = velocity.copy()
+    this.previousPosition = this.position.copy().sub(velocity)
   }
 
   public getMass(): number {
@@ -40,8 +38,17 @@ export default class Body {
   }
 
   public step(): void {
-    this.velocity.add(this.force.div(this.mass))
-    this.position.add(this.velocity)
+    const acceleration = this.force.div(this.mass)
+    if (this.initialStep) {
+      this.initialStep = false
+      // http://laplace.physics.ubc.ca/210/Doc/fd/Nbody.pdf
+      acceleration.div(2)
+    }
+    const newPosition = acceleration.add(
+      this.position.copy().mult(2)
+    ).sub(this.previousPosition)
+    this.previousPosition.set(this.position)
+    this.position.set(newPosition)
     this.force.mult(0)
   }
 

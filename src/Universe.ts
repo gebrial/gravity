@@ -3,10 +3,10 @@ import p5 from "p5"
 
 export default class Universe {
   private bodies: Body[] = [];
-  constructor(totalBodies: number) {
+  constructor(totalBodies: number, size: number) {
     for (let i = 0; i < totalBodies; i++) {
       const newBody = new Body()
-      newBody.setPosition(new p5.Vector(Math.random()*400, Math.random()*400))
+      newBody.setPosition(new p5.Vector(Math.random()*size, Math.random()*size))
       newBody.setVelocity(new p5.Vector(Math.random()*2 - 1, Math.random()*2 - 1))
       newBody.setMass(Math.random())
       this.bodies.push(newBody)
