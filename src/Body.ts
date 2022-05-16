@@ -7,7 +7,6 @@ export default class Body {
   private position: p5.Vector = new p5.Vector()
   private previousPosition: p5.Vector = new p5.Vector()
   private force: p5.Vector = new p5.Vector()
-  private initialStep = true
   private radius = Math.pow(this.mass * 10, 1./3)
 
   public getPosition(): p5.Vector {
@@ -41,11 +40,6 @@ export default class Body {
 
   public bodyStep(): void {
     const acceleration = this.force.div(this.mass)
-    if (this.initialStep) {
-      this.initialStep = false
-      // http://laplace.physics.ubc.ca/210/Doc/fd/Nbody.pdf
-      acceleration.div(2)
-    }
     const newPosition = acceleration.add(
       this.position.copy().mult(2)
     ).sub(this.previousPosition)
