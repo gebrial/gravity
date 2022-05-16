@@ -8,6 +8,7 @@ export default class Body {
   private previousPosition: p5.Vector = new p5.Vector()
   private force: p5.Vector = new p5.Vector()
   private initialStep = true
+  private radius = Math.pow(this.mass * 10, 1./3)
 
   public getPosition(): p5.Vector {
     return this.position.copy()
@@ -31,13 +32,14 @@ export default class Body {
 
   public setMass(mass: number): void {
     this.mass = mass
+    this.radius = Math.pow(this.mass * 10, 1./3)
   }
 
   public applyForce(force: p5.Vector): void {
     this.force.add(force)
   }
 
-  public step(): void {
+  public bodyStep(): void {
     const acceleration = this.force.div(this.mass)
     if (this.initialStep) {
       this.initialStep = false
@@ -60,6 +62,6 @@ export default class Body {
   }
 
   public getRadius(): number {
-    return Math.pow(this.mass * 10, 1./3)
+    return this.radius
   }
 }
