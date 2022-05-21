@@ -9,6 +9,25 @@ export default class Body {
   private force: p5.Vector = new p5.Vector()
   private radius = Math.pow(this.mass * 10, 1./3)
 
+  /**
+   * Calculates the acceleration at position otherPosition by this body
+   * @param otherPosition
+   */
+  public getAccelerationFromThis(otherPosition: p5.Vector): p5.Vector {
+    return Body.getAcceleration(otherPosition, this.position, this.mass)
+  }
+
+  /**
+   * Calculates the acceleration at position thisPosition by a body with mass otherMass at position otherPosition
+   * @param thisPosition
+   * @param otherPosition
+   * @param otherMass
+   */
+  public static getAcceleration(thisPosition: p5.Vector, otherPosition: p5.Vector, otherMass: number): p5.Vector {
+    const displacement = p5.Vector.sub(otherPosition, thisPosition)
+    return displacement.mult(otherMass / Math.pow(displacement.magSq(), 3/2))
+  }
+
   public getPosition(): p5.Vector {
     return this.position.copy()
   }

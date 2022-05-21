@@ -158,7 +158,7 @@ export class Octree {
    * @param threshold
    */
   public getAcceleration(point: p5.Vector, threshold = 0): p5.Vector {
-    if (!this.isDistanceThesholdExceeded(point, threshold)) {
+    if (this.leaf || !this.isDistanceThesholdExceeded(point, threshold)) {
       return this.getAccelerationByThis(point.copy())
     }
 
@@ -177,9 +177,7 @@ export class Octree {
    * @private
    */
   private getAccelerationByThis(point: p5.Vector) {
-    const difference = p5.Vector.sub(point, this.getCenterOfMass())
-    const distanceSquared = difference.magSq()
-    return difference.mult(this.getTotalMass() / Math.pow(distanceSquared, 3/2))
+    return Body.getAcceleration(point, this.getCenterOfMass(), this.getTotalMass())
   }
 
   /**
@@ -190,7 +188,8 @@ export class Octree {
    * @private
    */
   private isDistanceThesholdExceeded(point: p5.Vector, threshold: number): boolean {
-    return !this.leaf || this.size / (this.getCenterOfMass().dist(point)) > threshold
+    const quotient = this.size / this.getCenterOfMass().dist(point)
+    return quotient > threshold
   }
 }
 
