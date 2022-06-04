@@ -81,4 +81,29 @@ describe('octree', () => {
     expect(p5.Vector.dist(octreeAcceleration, totalAcceleration)).toBeLessThan(totalAcceleration.mag()/100)
     expect(Body.getAcceleration).toHaveBeenCalledTimes(1)
   })
+
+  it('get acceleration for point at body of multiple bodies', () => {
+    let testingPosition: p5.Vector
+    const bodies: Body[] = []
+    const totalAcceleration = new p5.Vector()
+    for (let i = 0; i < 10; i++) {
+      const newBody = new Body()
+      newBody.setMass(Math.random())
+      newBody.setPosition(new p5.Vector(Math.random(), Math.random(), Math.random()))
+      bodies.push(newBody)
+      testingPosition = bodies[0].getPosition()
+
+      totalAcceleration.add(newBody.getAccelerationFromThis(testingPosition))
+    }
+    testingPosition = bodies[0].getPosition()
+    const octree: Octree = new Octree(bodies, new p5.Vector(-2, -2, -2), 4)
+    const octreeAcceleration = octree.getAcceleration(testingPosition, 0)
+    expect(p5.Vector.dist(octreeAcceleration, totalAcceleration)).toBeLessThan(Number.EPSILON*bodies.length)
+  })
+
+  it('get acceleration for point at body of single body', () => {
+    const octree: Octree = new Octree([new Body()], new p5.Vector(-0.5, -0.5, -0.5), 1)
+    const octreeAcceleration = octree.getAcceleration(new p5.Vector())
+    expect(p5.Vector.dist(octreeAcceleration, new p5.Vector())).toBeLessThan(Number.EPSILON)
+  })
 })

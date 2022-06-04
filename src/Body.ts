@@ -24,6 +24,9 @@ export default class Body {
    * @param otherMass
    */
   public static getAcceleration(thisPosition: p5.Vector, otherPosition: p5.Vector, otherMass: number): p5.Vector {
+    if (p5.Vector.dist(thisPosition, otherPosition) < Number.EPSILON*3) {
+      return new p5.Vector()
+    }
     const displacement = p5.Vector.sub(otherPosition, thisPosition)
     return displacement.mult(otherMass / Math.pow(displacement.magSq(), 3/2))
   }
