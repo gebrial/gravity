@@ -120,3 +120,9 @@ Reach out with feedback and ideas:
 
 * [twitter.com/metachris](https://twitter.com/metachris)
 * [Create a new issue](https://github.com/metachris/typescript-boilerplate/issues)
+
+## gh-pages
+
+gh-pages configuration helped by this resource:
+https://fedeantuna.github.io/article/deploy-nextjs-app-to-github-pages
+

@@ -7,7 +7,13 @@ const universe = new Universe(totalBodies, size)
 export const iterateUniverse = (): void => {
   const sketch = (p: p5) => {
     p.setup = () => {
-      p.createCanvas(size, size, p.WEBGL)
+      const body = document.body
+      body.style.margin = "0"
+      body.style.padding = "0"
+      body.style.overflow = "hidden"
+      const windowWidth = window.innerWidth
+      const windowHeight = window.innerHeight
+      p.createCanvas(windowWidth, windowHeight, p.WEBGL)
     }
 
     p.draw = () => {
@@ -19,6 +25,12 @@ export const iterateUniverse = (): void => {
       p.fill(255)
       p.stroke(255)
       universe.draw(p)
+    }
+
+    p.windowResized = () => {
+      const windowWidth = window.innerWidth
+      const windowHeight = window.innerHeight
+      p.resizeCanvas(windowWidth, windowHeight)
     }
   }
 
