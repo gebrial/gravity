@@ -1,9 +1,19 @@
 import Universe from "./Universe"
 import p5 from "p5"
+import Slider from "./app/inputs/Slider"
 
-const totalBodies = 600
+let bodyCountSlider: Slider
+function setBodyCountSliderAttributes(): void {
+  bodyCountSlider.setPosition(0)
+  bodyCountSlider.style('width', '80px');
+  bodyCountSlider.attribute("min", "1")
+  bodyCountSlider.attribute("max", "1000")
+  bodyCountSlider.value(600)
+}
+
 const size = 800
-const universe = new Universe(totalBodies, size)
+let universe: Universe
+
 export const iterateUniverse = (): void => {
   const sketch = (p: p5) => {
     p.setup = () => {
@@ -14,9 +24,19 @@ export const iterateUniverse = (): void => {
       const windowWidth = window.innerWidth
       const windowHeight = window.innerHeight
       p.createCanvas(windowWidth, windowHeight, p.WEBGL)
+
+      bodyCountSlider = new Slider(p)
+      setBodyCountSliderAttributes()
+
+      universe = new Universe(bodyCountSlider.numberValue(), size)
     }
 
     p.draw = () => {
+      if (bodyCountSlider.valueChanged()) {
+        bodyCountSlider.updateValue()
+        universe = new Universe(bodyCountSlider.numberValue(), size)
+      }
+
       p.background(0, 0, 0)
       p.orbitControl()
       universe.universeStep()
