@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRandomCauchy = exports.getRandomGuassian = exports.getRandomVectorInUnitSphere = exports.insideEllipsoid = exports.zeroCenteredRandom = void 0;
+exports.mixHues = exports.getRandomCauchy = exports.getRandomGuassian = exports.getRandomVectorInUnitSphere = exports.insideEllipsoid = exports.zeroCenteredRandom = void 0;
 const tslib_1 = require("tslib");
 const p5_1 = (0, tslib_1.__importDefault)(require("p5"));
 function zeroCenteredRandom() {
@@ -35,4 +35,21 @@ function getRandomCauchy() {
     return u1 / u2;
 }
 exports.getRandomCauchy = getRandomCauchy;
+function mixHues(body1, body2) {
+    const hue1 = body1.hue;
+    const hue2 = body2.hue;
+    const mass1 = body1.mass;
+    const mass2 = body2.mass;
+    if (Math.abs(hue1 - hue2) > 256 / 2) {
+        // big hue difference, wrap around
+        if (hue1 < hue2) {
+            return mixHues({ hue: hue1 + 256, mass: mass1 }, body2) % 256;
+        }
+        else {
+            return mixHues(body1, { hue: hue2 + 256, mass: mass2 }) % 256;
+        }
+    }
+    return (body1.hue * mass1 + body2.hue * mass2) / (mass1 + mass2);
+}
+exports.mixHues = mixHues;
 //# sourceMappingURL=utils.js.map

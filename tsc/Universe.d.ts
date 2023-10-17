@@ -86,6 +86,7 @@ export default class Universe {
      * @private
      */
     private mergeBodies;
+    private mixBodyColorsByMass;
     draw(p: p5): void;
     getCenterOfMass(): p5.Vector;
     /**

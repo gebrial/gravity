@@ -4,6 +4,7 @@ exports.Octree = void 0;
 const tslib_1 = require("tslib");
 const Body_1 = (0, tslib_1.__importDefault)(require("./Body"));
 const p5_1 = (0, tslib_1.__importDefault)(require("p5"));
+const utils_1 = require("./app/utils");
 class Octree {
     constructor(items, startCorner, size) {
         this.totalMass = 0;
@@ -266,7 +267,16 @@ class Universe {
         newBody.setMass(newMass);
         newBody.setPosition(newPosition);
         newBody.setVelocity(newVelocity);
+        const newHue = this.mixBodyColorsByMass(body1, body2);
+        newBody.setHue(newHue);
         return newBody;
+    }
+    mixBodyColorsByMass(body1, body2) {
+        const hue1 = body1.getHue();
+        const hue2 = body2.getHue();
+        const body1Mass = body1.getMass();
+        const body2Mass = body2.getMass();
+        return (0, utils_1.mixHues)({ hue: hue1, mass: body1Mass }, { hue: hue2, mass: body2Mass });
     }
     draw(p) {
         for (let i = 0; i < this.bodies.length; i++) {

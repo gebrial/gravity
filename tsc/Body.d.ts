@@ -5,6 +5,7 @@ export default class Body {
     private previousPosition;
     private force;
     private radius;
+    private hue;
     /**
      * Calculates the acceleration at position otherPosition by this body
      * @param otherPosition
@@ -23,6 +24,8 @@ export default class Body {
     setVelocity(velocity: p5.Vector): void;
     getMass(): number;
     setMass(mass: number): void;
+    getHue(): number;
+    setHue(hue: number): void;
     applyForce(force: p5.Vector): void;
     bodyStep(): void;
     draw(p: p5): void;

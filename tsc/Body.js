@@ -11,6 +11,7 @@ class Body {
         this.previousPosition = new p5_1.default.Vector();
         this.force = new p5_1.default.Vector();
         this.radius = Math.pow(this.mass * 10, 1. / 3);
+        this.hue = Math.random() * 256;
     }
     /**
      * Calculates the acceleration at position otherPosition by this body
@@ -51,6 +52,12 @@ class Body {
         this.mass = mass;
         this.radius = Math.pow(this.mass * 10, 1. / 3);
     }
+    getHue() {
+        return this.hue;
+    }
+    setHue(hue) {
+        this.hue = hue;
+    }
     applyForce(force) {
         this.force.add(force);
     }
@@ -63,6 +70,10 @@ class Body {
     }
     draw(p) {
         p.push();
+        p.colorMode(p.HSB);
+        const color = p.color(`hsb(${Math.floor(this.hue)}, 100%, 100%)`);
+        p.stroke(color);
+        p.fill(color);
         p.translate(this.position);
         p.sphere(this.getRadius());
         p.pop();
