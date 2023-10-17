@@ -1,5 +1,6 @@
 import Body from "./Body"
 import p5 from "p5"
+import { BodyDistribution } from "./app/universe/BodyDistribution"
 
 export class Octree {
   private leaf: Body | undefined
@@ -193,51 +194,16 @@ export class Octree {
   }
 }
 
+export interface UniverseInitializationOptions {
+  totalBodies: number
+  size: number
+  bodyDistribution: BodyDistribution
+}
+
 export default class Universe {
   private bodies: Body[] = [];
-  constructor(totalBodies: number, size: number) {
-    for (let i = 0; i < totalBodies; i++) {
-      const newBody = new Body()
-      let initialPosition
-      do {
-        initialPosition = new p5.Vector(
-          this.random(size),
-          this.random(size/10),
-          this.random(size)
-        )
-      } while (!this.insideEllipsoid(initialPosition, size, size/10, size))
-      newBody.setPosition(initialPosition)
-      newBody.setVelocity(new p5.Vector(
-        this.random(),
-        this.random(),
-        this.random()
-      ))
-      newBody.setMass(Math.random())
-      this.bodies.push(newBody)
-    }
-  }
-
-  /**
-   * Returns whether the position is inside the ellipsoid defined by x, y, z centered at 0, 0, 0
-   * @param position
-   * @param x x-radius
-   * @param y y-radius
-   * @param z z-radius
-   * @private
-   */
-  private insideEllipsoid(position: p5.Vector, x: number, y: number, z: number): boolean {
-    const xComponent = position.x * position.x / x / x
-    const yComponent = position.y * position.y / y / y
-    const zComponent = position.z * position.z / z / z
-    return xComponent + yComponent + zComponent <= 1
-  }
-
-  /**
-   * Returns a random number with a maximum magnitude
-   * @param maxMagnitude
-   */
-  private random(maxMagnitude = 0): number {
-    return Math.random() * maxMagnitude * 2 - maxMagnitude
+  constructor(options: UniverseInitializationOptions) {
+    this.bodies = options.bodyDistribution.initializeBodies(options)
   }
 
   /**

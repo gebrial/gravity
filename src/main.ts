@@ -1,9 +1,10 @@
-import Universe from "./Universe"
 import p5 from "p5"
 import Slider from "./app/inputs/Slider"
 import Select from "./app/inputs/Select"
+import Universe, { UniverseInitializationOptions } from "./Universe"
+import { EllipsoidBodyDistribution } from "./app/universe/BodyDistribution"
 
-let universeRequiresReset: boolean = false
+let universeRequiresReset = true
 
 let bodyCountSlider: Slider
 function setBodyCountSliderAttributes(): void {
@@ -46,13 +47,18 @@ function checkAndHandleInitialBodyDistributionSelectorChange(): void {
   }
 }
 
-function resetUniverseIfRequired(): void {
+function createNewUniverseIfRequired(): Universe {
   if (!universeRequiresReset) {
-    return
+    return universe
   }
 
-  universe = new Universe(bodyCountSlider.numberValue(), size)
+  const universeInitializationOptions: UniverseInitializationOptions = {
+    totalBodies: bodyCountSlider.numberValue(),
+    size: size,
+    bodyDistribution: new EllipsoidBodyDistribution()
+  }
   universeRequiresReset = false
+  return new Universe(universeInitializationOptions)
 }
 
 const size = 800
@@ -74,15 +80,14 @@ export const iterateUniverse = (): void => {
 
       initialBodyDistributionSelector = new Select(p)
       setInitialBodyDistributionSelectorAttributes()
-
-      universe = new Universe(bodyCountSlider.numberValue(), size)
+      universe = createNewUniverseIfRequired()
     }
 
     p.draw = () => {
       checkAndHandleBodyCountSliderChange()
       checkAndHandleInitialBodyDistributionSelectorChange()
-      resetUniverseIfRequired()
-      
+      universe = createNewUniverseIfRequired()
+
       p.background(0, 0, 0)
       p.orbitControl()
       universe.universeStep()

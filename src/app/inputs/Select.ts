@@ -16,12 +16,14 @@ export default class Select extends p5.Element {
     }
 
     public addOption(name: string, value?: string): Select {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         this.select.option(name, value)
         return this
     }
 
     public disableOption(name: string): Select {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         this.select.disable(name)
         return this
