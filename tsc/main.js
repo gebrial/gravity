@@ -2,11 +2,61 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.iterateUniverse = void 0;
 const tslib_1 = require("tslib");
-const Universe_1 = (0, tslib_1.__importDefault)(require("./Universe"));
 const p5_1 = (0, tslib_1.__importDefault)(require("p5"));
-const totalBodies = 600;
+const Slider_1 = (0, tslib_1.__importDefault)(require("./app/inputs/Slider"));
+const Select_1 = (0, tslib_1.__importDefault)(require("./app/inputs/Select"));
+const Universe_1 = (0, tslib_1.__importDefault)(require("./Universe"));
+const BodyDistribution_1 = require("./app/universe/BodyDistribution");
+let universeRequiresReset = true;
+let bodyCountSlider;
+function setBodyCountSliderAttributes() {
+    bodyCountSlider.setPosition(0);
+    bodyCountSlider.style('width', '80px');
+    bodyCountSlider.attribute("min", "1");
+    bodyCountSlider.attribute("max", "1000");
+    bodyCountSlider.value(600);
+}
+function checkAndHandleBodyCountSliderChange() {
+    if (bodyCountSlider.valueChanged()) {
+        bodyCountSlider.updateValue();
+        universeRequiresReset = true;
+    }
+}
+let initialBodyDistributionSelector;
+function setInitialBodyDistributionSelectorAttributes() {
+    initialBodyDistributionSelector.setPosition(1);
+    initialBodyDistributionSelector.style('width', '80px');
+    initialBodyDistributionSelector.addOption("ellipsoid");
+    initialBodyDistributionSelector.addOption("ring");
+    initialBodyDistributionSelector.addOption("sphere");
+    // todo: implement these
+    initialBodyDistributionSelector.addOption("spiral");
+    initialBodyDistributionSelector.disableOption("spiral");
+    initialBodyDistributionSelector.addOption("uniform");
+    initialBodyDistributionSelector.disableOption("uniform");
+}
+function checkAndHandleInitialBodyDistributionSelectorChange() {
+    if (initialBodyDistributionSelector.valueChanged()) {
+        initialBodyDistributionSelector.updateValue();
+        universeRequiresReset = true;
+        // todo: implement
+        // universe.updateDistribution(initialBodyDistributionSelector.value())
+    }
+}
+function createNewUniverseIfRequired() {
+    if (!universeRequiresReset) {
+        return universe;
+    }
+    const universeInitializationOptions = {
+        totalBodies: bodyCountSlider.numberValue(),
+        size: size,
+        bodyDistribution: new BodyDistribution_1.EllipsoidBodyDistribution()
+    };
+    universeRequiresReset = false;
+    return new Universe_1.default(universeInitializationOptions);
+}
 const size = 800;
-const universe = new Universe_1.default(totalBodies, size);
+let universe;
 const iterateUniverse = () => {
     const sketch = (p) => {
         p.setup = () => {
@@ -17,8 +67,16 @@ const iterateUniverse = () => {
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
             p.createCanvas(windowWidth, windowHeight, p.WEBGL);
+            bodyCountSlider = new Slider_1.default(p, p.createSlider(1, 100));
+            setBodyCountSliderAttributes();
+            initialBodyDistributionSelector = new Select_1.default(p, p.createSelect());
+            setInitialBodyDistributionSelectorAttributes();
+            universe = createNewUniverseIfRequired();
         };
         p.draw = () => {
+            checkAndHandleBodyCountSliderChange();
+            checkAndHandleInitialBodyDistributionSelectorChange();
+            universe = createNewUniverseIfRequired();
             p.background(0, 0, 0);
             p.orbitControl();
             universe.universeStep();

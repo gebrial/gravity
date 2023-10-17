@@ -1,5 +1,6 @@
 import Body from "./Body";
 import p5 from "p5";
+import { BodyDistribution } from "./app/universe/BodyDistribution";
 export declare class Octree {
     private leaf;
     private children;
@@ -49,23 +50,14 @@ export declare class Octree {
      */
     private isDistanceThesholdExceeded;
 }
+export interface UniverseInitializationOptions {
+    totalBodies: number;
+    size: number;
+    bodyDistribution: BodyDistribution;
+}
 export default class Universe {
     private bodies;
-    constructor(totalBodies: number, size: number);
-    /**
-     * Returns whether the position is inside the ellipsoid defined by x, y, z centered at 0, 0, 0
-     * @param position
-     * @param x x-radius
-     * @param y y-radius
-     * @param z z-radius
-     * @private
-     */
-    private insideEllipsoid;
-    /**
-     * Returns a random number with a maximum magnitude
-     * @param maxMagnitude
-     */
-    private random;
+    constructor(options: UniverseInitializationOptions);
     /**
      * Multiplies the vector by the scalar in place.
      * The built in p5.Vector.mult() function takes longer to execute than this one.

@@ -168,40 +168,9 @@ class Octree {
 }
 exports.Octree = Octree;
 class Universe {
-    constructor(totalBodies, size) {
+    constructor(options) {
         this.bodies = [];
-        for (let i = 0; i < totalBodies; i++) {
-            const newBody = new Body_1.default();
-            let initialPosition;
-            do {
-                initialPosition = new p5_1.default.Vector(this.random(size), this.random(size / 10), this.random(size));
-            } while (!this.insideEllipsoid(initialPosition, size, size / 10, size));
-            newBody.setPosition(initialPosition);
-            newBody.setVelocity(new p5_1.default.Vector(this.random(), this.random(), this.random()));
-            newBody.setMass(Math.random());
-            this.bodies.push(newBody);
-        }
-    }
-    /**
-     * Returns whether the position is inside the ellipsoid defined by x, y, z centered at 0, 0, 0
-     * @param position
-     * @param x x-radius
-     * @param y y-radius
-     * @param z z-radius
-     * @private
-     */
-    insideEllipsoid(position, x, y, z) {
-        const xComponent = position.x * position.x / x / x;
-        const yComponent = position.y * position.y / y / y;
-        const zComponent = position.z * position.z / z / z;
-        return xComponent + yComponent + zComponent <= 1;
-    }
-    /**
-     * Returns a random number with a maximum magnitude
-     * @param maxMagnitude
-     */
-    random(maxMagnitude = 0) {
-        return Math.random() * maxMagnitude * 2 - maxMagnitude;
+        this.bodies = options.bodyDistribution.initializeBodies(options);
     }
     /**
      * Multiplies the vector by the scalar in place.
