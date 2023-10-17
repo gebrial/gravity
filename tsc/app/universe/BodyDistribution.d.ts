@@ -6,3 +6,9 @@ export declare abstract class BodyDistribution {
 export declare class EllipsoidBodyDistribution extends BodyDistribution {
     initializeBodies(options: UniverseInitializationOptions): Body[];
 }
+export declare class RingBodyDistribution extends BodyDistribution {
+    initializeBodies(options: UniverseInitializationOptions): Body[];
+}
+export declare class SphereBodyDistribution extends BodyDistribution {
+    initializeBodies(options: UniverseInitializationOptions): Body[];
+}

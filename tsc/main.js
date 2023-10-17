@@ -22,6 +22,7 @@ function checkAndHandleBodyCountSliderChange() {
         universeRequiresReset = true;
     }
 }
+let bodyDistribution = new BodyDistribution_1.EllipsoidBodyDistribution();
 let initialBodyDistributionSelector;
 function setInitialBodyDistributionSelectorAttributes() {
     initialBodyDistributionSelector.setPosition(1);
@@ -38,9 +39,21 @@ function setInitialBodyDistributionSelectorAttributes() {
 function checkAndHandleInitialBodyDistributionSelectorChange() {
     if (initialBodyDistributionSelector.valueChanged()) {
         initialBodyDistributionSelector.updateValue();
+        const newBodyDistributionString = initialBodyDistributionSelector.value();
+        switch (newBodyDistributionString) {
+            case "ellipsoid":
+                bodyDistribution = new BodyDistribution_1.EllipsoidBodyDistribution();
+                break;
+            case "ring":
+                bodyDistribution = new BodyDistribution_1.RingBodyDistribution();
+                break;
+            case "sphere":
+                bodyDistribution = new BodyDistribution_1.SphereBodyDistribution();
+                break;
+            default:
+                throw new Error(`Unknown body distribution: ${newBodyDistributionString}`);
+        }
         universeRequiresReset = true;
-        // todo: implement
-        // universe.updateDistribution(initialBodyDistributionSelector.value())
     }
 }
 function createNewUniverseIfRequired() {
@@ -50,7 +63,7 @@ function createNewUniverseIfRequired() {
     const universeInitializationOptions = {
         totalBodies: bodyCountSlider.numberValue(),
         size: size,
-        bodyDistribution: new BodyDistribution_1.EllipsoidBodyDistribution()
+        bodyDistribution: bodyDistribution,
     };
     universeRequiresReset = false;
     return new Universe_1.default(universeInitializationOptions);
