@@ -49,10 +49,14 @@ class SphereBodyDistribution extends BodyDistribution {
         const { totalBodies, size } = options;
         for (let i = 0; i < totalBodies; i++) {
             const newBody = new Body_1.default();
-            const initialPosition = (0, utils_1.getRandomVectorInUnitSphere)().mult(size);
+            const initialPosition = (0, utils_1.getRandomVectorInUnitSphere)()
+                .normalize()
+                .mult(size * (0, utils_1.getRandomGuassian)());
             newBody.setPosition(initialPosition);
-            newBody.setVelocity(new p5_1.default.Vector(0, 0, 0));
-            newBody.setMass(Math.random());
+            newBody.setVelocity((0, utils_1.getRandomVectorInUnitSphere)()
+                .normalize()
+                .mult(0.1 * (0, utils_1.getRandomGuassian)()));
+            newBody.setMass(Math.abs((0, utils_1.getRandomCauchy)()));
             bodies.push(newBody);
         }
         return bodies;

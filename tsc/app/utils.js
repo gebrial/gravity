@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRandomVectorInUnitSphere = exports.insideEllipsoid = exports.zeroCenteredRandom = void 0;
+exports.getRandomCauchy = exports.getRandomGuassian = exports.getRandomVectorInUnitSphere = exports.insideEllipsoid = exports.zeroCenteredRandom = void 0;
 const tslib_1 = require("tslib");
 const p5_1 = (0, tslib_1.__importDefault)(require("p5"));
 function zeroCenteredRandom() {
@@ -22,4 +22,17 @@ function getRandomVectorInUnitSphere() {
     return vector;
 }
 exports.getRandomVectorInUnitSphere = getRandomVectorInUnitSphere;
+function getRandomGuassian() {
+    // Box-Muller transform
+    const u1 = Math.random();
+    const u2 = Math.random();
+    return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+}
+exports.getRandomGuassian = getRandomGuassian;
+function getRandomCauchy() {
+    const u1 = getRandomGuassian();
+    const u2 = getRandomGuassian();
+    return u1 / u2;
+}
+exports.getRandomCauchy = getRandomCauchy;
 //# sourceMappingURL=utils.js.map
