@@ -1,6 +1,9 @@
 import Universe from "./Universe"
 import p5 from "p5"
 import Slider from "./app/inputs/Slider"
+import Select from "./app/inputs/Select"
+
+let universeRequiresReset: boolean = false
 
 let bodyCountSlider: Slider
 function setBodyCountSliderAttributes(): void {
@@ -9,6 +12,47 @@ function setBodyCountSliderAttributes(): void {
   bodyCountSlider.attribute("min", "1")
   bodyCountSlider.attribute("max", "1000")
   bodyCountSlider.value(600)
+}
+
+function checkAndHandleBodyCountSliderChange(): void {
+  if (bodyCountSlider.valueChanged()) {
+    bodyCountSlider.updateValue()
+    universeRequiresReset = true
+  }
+}
+
+let initialBodyDistributionSelector: Select
+function setInitialBodyDistributionSelectorAttributes(): void {
+  initialBodyDistributionSelector.setPosition(1)
+  initialBodyDistributionSelector.style('width', '80px');
+
+  initialBodyDistributionSelector.addOption("ellipsoid")
+  initialBodyDistributionSelector.addOption("ring")
+  initialBodyDistributionSelector.addOption("sphere")
+
+  // todo: implement these
+  initialBodyDistributionSelector.addOption("spiral")
+  initialBodyDistributionSelector.disableOption("spiral")
+  initialBodyDistributionSelector.addOption("uniform")  
+  initialBodyDistributionSelector.disableOption("uniform")  
+}
+
+function checkAndHandleInitialBodyDistributionSelectorChange(): void {
+  if (initialBodyDistributionSelector.valueChanged()) {
+    initialBodyDistributionSelector.updateValue()
+    universeRequiresReset = true
+    // todo: implement
+    // universe.updateDistribution(initialBodyDistributionSelector.value())
+  }
+}
+
+function resetUniverseIfRequired(): void {
+  if (!universeRequiresReset) {
+    return
+  }
+
+  universe = new Universe(bodyCountSlider.numberValue(), size)
+  universeRequiresReset = false
 }
 
 const size = 800
@@ -28,15 +72,17 @@ export const iterateUniverse = (): void => {
       bodyCountSlider = new Slider(p)
       setBodyCountSliderAttributes()
 
+      initialBodyDistributionSelector = new Select(p)
+      setInitialBodyDistributionSelectorAttributes()
+
       universe = new Universe(bodyCountSlider.numberValue(), size)
     }
 
     p.draw = () => {
-      if (bodyCountSlider.valueChanged()) {
-        bodyCountSlider.updateValue()
-        universe = new Universe(bodyCountSlider.numberValue(), size)
-      }
-
+      checkAndHandleBodyCountSliderChange()
+      checkAndHandleInitialBodyDistributionSelectorChange()
+      resetUniverseIfRequired()
+      
       p.background(0, 0, 0)
       p.orbitControl()
       universe.universeStep()
