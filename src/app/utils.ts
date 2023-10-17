@@ -22,3 +22,16 @@ export function getRandomVectorInUnitSphere(): p5.Vector {
     } while (vector.magSq() > 1)
     return vector
 }
+
+export function getRandomGuassian(): number {
+    // Box-Muller transform
+    const u1 = Math.random()
+    const u2 = Math.random()
+    return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2)
+}
+
+export function getRandomCauchy(): number {
+    const u1 = getRandomGuassian()
+    const u2 = getRandomGuassian()
+    return u1 / u2
+}

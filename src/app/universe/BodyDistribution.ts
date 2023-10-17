@@ -1,6 +1,6 @@
 import p5 from "p5"
 import { UniverseInitializationOptions } from "../../Universe"
-import { getRandomVectorInUnitSphere } from "../utils"
+import { getRandomCauchy, getRandomGuassian, getRandomVectorInUnitSphere } from "../utils"
 import Body from "../../Body"
 
 export abstract class BodyDistribution {
@@ -47,18 +47,23 @@ export class RingBodyDistribution extends BodyDistribution {
         return bodies
     }
 }
-  
+
 export class SphereBodyDistribution extends BodyDistribution {
     public initializeBodies(options: UniverseInitializationOptions): Body[] {
         const bodies: Body[] = []
         const { totalBodies, size } = options
         for (let i = 0; i < totalBodies; i++) {
             const newBody = new Body()
-            const initialPosition = getRandomVectorInUnitSphere().mult(size)
+            const initialPosition = getRandomVectorInUnitSphere()
+                .normalize()
+                .mult(size * getRandomGuassian())
             newBody.setPosition(initialPosition)
-            newBody.setVelocity(new p5.Vector(0, 0, 0))
-            newBody.setMass(Math.random())
-            bodies.push(newBody)    
+            newBody.setVelocity(getRandomVectorInUnitSphere()
+                .normalize()
+                .mult(0.1 * getRandomGuassian())
+            )
+            newBody.setMass(Math.abs(getRandomCauchy()))
+            bodies.push(newBody)
         }
         return bodies
     }
