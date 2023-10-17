@@ -4,10 +4,9 @@ export default class Select extends p5.Element {
     private select: p5.Element
     private newValue: string = this.value().toString()
 
-    constructor(p: p5) {
-        const select = p.createSelect()
-        super(select.elt, p)
-        this.select = select
+    constructor(p: p5, selectElement: p5.Element) {
+        super(selectElement.elt, p)
+        this.select = selectElement
     }
 
     public setPosition(index: number): Select {

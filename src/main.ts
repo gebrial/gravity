@@ -75,10 +75,10 @@ export const iterateUniverse = (): void => {
       const windowHeight = window.innerHeight
       p.createCanvas(windowWidth, windowHeight, p.WEBGL)
 
-      bodyCountSlider = new Slider(p)
+      bodyCountSlider = new Slider(p, p.createSlider(1, 100))
       setBodyCountSliderAttributes()
 
-      initialBodyDistributionSelector = new Select(p)
+      initialBodyDistributionSelector = new Select(p, p.createSelect())
       setInitialBodyDistributionSelectorAttributes()
       universe = createNewUniverseIfRequired()
     }

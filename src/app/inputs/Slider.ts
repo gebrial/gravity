@@ -4,9 +4,8 @@ import { getNumberFromStringOrNumber } from "./util"
 export default class Slider extends p5.Element{
     private newValue: number = this.numberValue()
 
-    constructor(p: p5) {
-        const slider = p.createSlider(1, 100)
-        super(slider.elt, p)
+    constructor(p: p5, sliderElement: p5.Element) {
+        super(sliderElement.elt, p)
     }
 
     public setPosition(index: number): Slider {
