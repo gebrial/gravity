@@ -1,6 +1,7 @@
 import Body from "./Body"
 import p5 from "p5"
 import { BodyDistribution } from "./app/universe/BodyDistribution"
+import { mixHues } from "./app/utils"
 
 export class Octree {
   private leaf: Body | undefined
@@ -306,7 +307,19 @@ export default class Universe {
     newBody.setMass(newMass)
     newBody.setPosition(newPosition)
     newBody.setVelocity(newVelocity)
+
+    const newHue = this.mixBodyColorsByMass(body1, body2)
+    newBody.setHue(newHue)
+
     return newBody
+  }
+
+  private mixBodyColorsByMass(body1: Body, body2: Body): number {
+    const hue1 = body1.getHue()
+    const hue2 = body2.getHue()
+    const body1Mass = body1.getMass()
+    const body2Mass = body2.getMass()
+    return mixHues({hue: hue1, mass: body1Mass}, {hue: hue2, mass: body2Mass})
   }
 
   public draw(p: p5): void {

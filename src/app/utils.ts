@@ -35,3 +35,25 @@ export function getRandomCauchy(): number {
     const u2 = getRandomGuassian()
     return u1 / u2
 }
+
+export interface BodyHueMass {
+    hue: number
+    mass: number
+}
+export function mixHues(body1: BodyHueMass, body2: BodyHueMass): number {
+    const hue1 = body1.hue
+    const hue2 = body2.hue
+
+    const mass1 = body1.mass
+    const mass2 = body2.mass
+
+    if (Math.abs(hue1 - hue2) > 256/2) {
+        // big hue difference, wrap around
+        if (hue1 < hue2) {
+            return mixHues({hue: hue1 + 256, mass: mass1}, body2) % 256
+        } else {
+            return mixHues(body1, {hue: hue2 + 256, mass: mass2}) % 256
+        }
+    }
+    return (body1.hue * mass1 + body2.hue * mass2) / (mass1 + mass2)
+}

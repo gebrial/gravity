@@ -8,6 +8,7 @@ export default class Body {
   private previousPosition: p5.Vector = new p5.Vector()
   private force: p5.Vector = new p5.Vector()
   private radius = Math.pow(this.mass * 10, 1./3)
+  private hue: number = Math.random() * 256
 
   /**
    * Calculates the acceleration at position otherPosition by this body
@@ -56,6 +57,14 @@ export default class Body {
     this.radius = Math.pow(this.mass * 10, 1./3)
   }
 
+  public getHue(): number {
+    return this.hue
+  }
+
+  public setHue(hue: number): void {
+    this.hue = hue
+  }
+
   public applyForce(force: p5.Vector): void {
     this.force.add(force)
   }
@@ -72,6 +81,12 @@ export default class Body {
 
   public draw(p: p5): void {
     p.push()
+
+    p.colorMode(p.HSB)
+    const color = p.color(`hsb(${Math.floor(this.hue)}, 100%, 100%)`)
+    p.stroke(color)
+    p.fill(color)
+
     p.translate(this.position)
     p.sphere(this.getRadius())
     p.pop()
