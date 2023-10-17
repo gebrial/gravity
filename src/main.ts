@@ -2,7 +2,7 @@ import p5 from "p5"
 import Slider from "./app/inputs/Slider"
 import Select from "./app/inputs/Select"
 import Universe, { UniverseInitializationOptions } from "./Universe"
-import { EllipsoidBodyDistribution } from "./app/universe/BodyDistribution"
+import { BodyDistribution, EllipsoidBodyDistribution, RingBodyDistribution, SphereBodyDistribution } from "./app/universe/BodyDistribution"
 
 let universeRequiresReset = true
 
@@ -22,6 +22,8 @@ function checkAndHandleBodyCountSliderChange(): void {
   }
 }
 
+
+let bodyDistribution: BodyDistribution = new EllipsoidBodyDistribution()
 let initialBodyDistributionSelector: Select
 function setInitialBodyDistributionSelectorAttributes(): void {
   initialBodyDistributionSelector.setPosition(1)
@@ -41,9 +43,21 @@ function setInitialBodyDistributionSelectorAttributes(): void {
 function checkAndHandleInitialBodyDistributionSelectorChange(): void {
   if (initialBodyDistributionSelector.valueChanged()) {
     initialBodyDistributionSelector.updateValue()
+    const newBodyDistributionString = initialBodyDistributionSelector.value()
+    switch (newBodyDistributionString) {
+      case "ellipsoid":
+        bodyDistribution = new EllipsoidBodyDistribution()
+        break
+      case "ring":
+        bodyDistribution = new RingBodyDistribution()
+        break
+      case "sphere":
+        bodyDistribution = new SphereBodyDistribution()
+        break
+      default:
+        throw new Error(`Unknown body distribution: ${newBodyDistributionString}`)
+    }
     universeRequiresReset = true
-    // todo: implement
-    // universe.updateDistribution(initialBodyDistributionSelector.value())
   }
 }
 
@@ -55,7 +69,7 @@ function createNewUniverseIfRequired(): Universe {
   const universeInitializationOptions: UniverseInitializationOptions = {
     totalBodies: bodyCountSlider.numberValue(),
     size: size,
-    bodyDistribution: new EllipsoidBodyDistribution()
+    bodyDistribution: bodyDistribution,
   }
   universeRequiresReset = false
   return new Universe(universeInitializationOptions)

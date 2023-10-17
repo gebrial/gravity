@@ -10,3 +10,15 @@ export function insideEllipsoid(position: p5.Vector, radius: p5.Vector): boolean
     const zComponent = position.z * position.z / radius.z / radius.z
     return xComponent + yComponent + zComponent <= 1
 }
+
+export function getRandomVectorInUnitSphere(): p5.Vector {
+    let vector
+    do {
+        vector = new p5.Vector(
+            zeroCenteredRandom(),
+            zeroCenteredRandom(),
+            zeroCenteredRandom(),
+        )
+    } while (vector.magSq() > 1)
+    return vector
+}
