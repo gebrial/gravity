@@ -279,12 +279,15 @@ export default class Universe {
       this.bodies.splice(this.bodies.indexOf(body), 1)
     })
     this.bodies.push(...bodiesToAdd)
+
+    if (bodiesToRemove.length > 0) {
+      return this.checkAndMergeCollidingBodies(this.bodies.map(body => body.getPosition()))
+    }
   }
 
   public universeStep(): void {
-    const bodyPositions = this.bodies.map(body => body.getPosition())
-    this.calculateAndApplyForces(bodyPositions)
-    this.checkAndMergeCollidingBodies(bodyPositions)
+    this.checkAndMergeCollidingBodies(this.bodies.map(body => body.getPosition()))
+    this.calculateAndApplyForces(this.bodies.map(body => body.getPosition()))
   }
 
   /**
