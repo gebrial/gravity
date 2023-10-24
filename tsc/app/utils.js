@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mixHues = exports.getRandomCauchy = exports.getRandomGuassian = exports.getRandomVectorInUnitSphere = exports.insideEllipsoid = exports.zeroCenteredRandom = void 0;
+exports.multiply = exports.mixHues = exports.getRandomCauchy = exports.getRandomGuassian = exports.getRandomVectorInUnitSphere = exports.insideEllipsoid = exports.zeroCenteredRandom = void 0;
 const tslib_1 = require("tslib");
 const p5_1 = (0, tslib_1.__importDefault)(require("p5"));
 function zeroCenteredRandom() {
@@ -52,4 +52,15 @@ function mixHues(body1, body2) {
     return (body1.hue * mass1 + body2.hue * mass2) / (mass1 + mass2);
 }
 exports.mixHues = mixHues;
+/**
+ * Multiplies the vector by the scalar in place.
+ * The built in p5.Vector.mult() function takes longer to execute than this one.
+ * @param vector
+ * @param scalar
+ * @private
+ */
+function multiply(vector, scalar) {
+    return vector.set(vector.x * scalar, vector.y * scalar, vector.z * scalar);
+}
+exports.multiply = multiply;
 //# sourceMappingURL=utils.js.map

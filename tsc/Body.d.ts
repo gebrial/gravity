@@ -26,7 +26,9 @@ export default class Body {
     setMass(mass: number): void;
     getHue(): number;
     setHue(hue: number): void;
+    getForce(): p5.Vector;
     applyForce(force: p5.Vector): void;
+    resetForce(): void;
     bodyStep(): void;
     draw(p: p5): void;
     getRadius(): number;

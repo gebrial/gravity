@@ -59,14 +59,6 @@ export default class Universe {
     private bodies;
     constructor(options: UniverseInitializationOptions);
     /**
-     * Multiplies the vector by the scalar in place.
-     * The built in p5.Vector.mult() function takes longer to execute than this one.
-     * @param vector
-     * @param scalar
-     * @private
-     */
-    private multiply;
-    /**
      * Calculates the gravitational force between two bodies, applies the forces, and updates the positions.
      * @param bodyPositions
      * @private

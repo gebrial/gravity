@@ -20,6 +20,29 @@ class EllipsoidBodyDistribution extends BodyDistribution {
             newBody.setMass(Math.random());
             bodies.push(newBody);
         }
+        // apply radial velocity based on acceleration
+        for (let ii = 0; ii < totalBodies; ii++) {
+            // calculate forces applied on every body
+            const body1 = bodies[ii];
+            const body1Position = body1.getPosition();
+            for (let jj = ii + 1; jj < totalBodies; jj++) {
+                const body2 = bodies[jj];
+                const body2Position = body2.getPosition();
+                const direction = body1Position.copy().sub(body2Position);
+                const distanceSq = direction.magSq() + size * size / 100; // smoothing factor
+                const force = body1.getMass() * body2.getMass() / Math.pow(distanceSq, 3 / 2);
+                body2.applyForce((0, utils_1.multiply)(direction, force));
+                body1.applyForce((0, utils_1.multiply)(direction, -1));
+            }
+            const forces = body1.getForce();
+            const acceleration = (0, utils_1.multiply)(forces, 1 / body1.getMass());
+            const speed = Math.sqrt(acceleration.mag() * body1.getPosition().mag());
+            const angularVelocity = new p5_1.default.Vector(0, 1, 0);
+            const velocityDirection = body1.getPosition().copy().cross(angularVelocity);
+            velocityDirection.setMag(speed / 2);
+            body1.setVelocity(velocityDirection);
+            body1.resetForce();
+        }
         return bodies;
     }
 }
@@ -53,11 +76,27 @@ class SphereBodyDistribution extends BodyDistribution {
                 .normalize()
                 .mult(size * (0, utils_1.getRandomGuassian)());
             newBody.setPosition(initialPosition);
-            newBody.setVelocity((0, utils_1.getRandomVectorInUnitSphere)()
-                .normalize()
-                .mult(0.1 * (0, utils_1.getRandomGuassian)()));
             newBody.setMass(Math.abs((0, utils_1.getRandomCauchy)()));
             bodies.push(newBody);
+        }
+        // calculate potential energy of each body
+        for (let ii = 0; ii < totalBodies; ii++) {
+            const body1 = bodies[ii];
+            const body1Position = body1.getPosition();
+            let potentialEnergy = 0;
+            for (let jj = 0; jj < totalBodies; jj++) {
+                if (ii === jj) {
+                    continue;
+                }
+                const body2 = bodies[jj];
+                const body2Position = body2.getPosition();
+                const direction = body1Position.copy().sub(body2Position);
+                const distance = direction.mag();
+                potentialEnergy -= body1.getMass() * body2.getMass() / distance;
+            }
+            const speed = Math.sqrt(2 * Math.abs(potentialEnergy) / body1.getMass());
+            // divide speed by 2 so that bodies don't escape to infinity
+            body1.setVelocity((0, utils_1.getRandomVectorInUnitSphere)().setMag(speed / 2));
         }
         return bodies;
     }

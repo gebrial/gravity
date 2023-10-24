@@ -174,16 +174,6 @@ class Universe {
         this.bodies = options.bodyDistribution.initializeBodies(options);
     }
     /**
-     * Multiplies the vector by the scalar in place.
-     * The built in p5.Vector.mult() function takes longer to execute than this one.
-     * @param vector
-     * @param scalar
-     * @private
-     */
-    multiply(vector, scalar) {
-        return vector.set(vector.x * scalar, vector.y * scalar, vector.z * scalar);
-    }
-    /**
      * Calculates the gravitational force between two bodies, applies the forces, and updates the positions.
      * @param bodyPositions
      * @private
@@ -199,8 +189,8 @@ class Universe {
                 const distanceSq = tmp.set(body1Position).sub(body2Position).magSq();
                 const force = body1.getMass() * body2.getMass() / Math.pow(distanceSq, 3 / 2);
                 const direction = tmp;
-                body2.applyForce(this.multiply(direction, force));
-                body1.applyForce(this.multiply(direction, -1));
+                body2.applyForce((0, utils_1.multiply)(direction, force));
+                body1.applyForce((0, utils_1.multiply)(direction, -1));
             }
         }
         for (let i = 0; i < this.bodies.length; i++) {

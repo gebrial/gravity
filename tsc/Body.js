@@ -38,6 +38,7 @@ class Body {
     }
     setPosition(position) {
         this.position = position.copy();
+        this.previousPosition = position.copy();
     }
     getVelocity() {
         return this.position.copy().sub(this.previousPosition);
@@ -58,15 +59,21 @@ class Body {
     setHue(hue) {
         this.hue = hue;
     }
+    getForce() {
+        return this.force.copy();
+    }
     applyForce(force) {
         this.force.add(force);
+    }
+    resetForce() {
+        this.force.mult(0);
     }
     bodyStep() {
         const acceleration = this.force.div(this.mass);
         const newPosition = acceleration.add(this.position.copy().mult(2)).sub(this.previousPosition);
         this.previousPosition.set(this.position);
         this.position.set(newPosition);
-        this.force.mult(0);
+        this.resetForce();
     }
     draw(p) {
         p.push();
