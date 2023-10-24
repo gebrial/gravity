@@ -38,6 +38,7 @@ export default class Body {
 
   public setPosition(position: p5.Vector): void {
     this.position = position.copy()
+    this.previousPosition = position.copy()
   }
 
   public getVelocity(): p5.Vector {
@@ -65,8 +66,16 @@ export default class Body {
     this.hue = hue
   }
 
+  public getForce(): p5.Vector {
+    return this.force.copy()
+  }
+
   public applyForce(force: p5.Vector): void {
     this.force.add(force)
+  }
+
+  public resetForce(): void {
+    this.force.mult(0)
   }
 
   public bodyStep(): void {
@@ -76,7 +85,7 @@ export default class Body {
     ).sub(this.previousPosition)
     this.previousPosition.set(this.position)
     this.position.set(newPosition)
-    this.force.mult(0)
+    this.resetForce()
   }
 
   public draw(p: p5): void {

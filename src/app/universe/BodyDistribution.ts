@@ -1,6 +1,6 @@
 import p5 from "p5"
 import { UniverseInitializationOptions } from "../../Universe"
-import { getRandomCauchy, getRandomGuassian, getRandomVectorInUnitSphere } from "../utils"
+import { getRandomCauchy, getRandomGuassian, getRandomVectorInUnitSphere, multiply } from "../utils"
 import Body from "../../Body"
 
 export abstract class BodyDistribution {
@@ -21,6 +21,34 @@ export class EllipsoidBodyDistribution extends BodyDistribution {
             newBody.setMass(Math.random())
             bodies.push(newBody)  
         }
+
+        // apply radial velocity based on acceleration
+        for (let ii = 0; ii < totalBodies; ii++) {
+            // calculate forces applied on every body
+            const body1 = bodies[ii]
+            const body1Position = body1.getPosition()
+            for (let jj = ii + 1; jj < totalBodies; jj++) {
+                const body2 = bodies[jj]
+                const body2Position = body2.getPosition()
+                const direction = body1Position.copy().sub(body2Position)
+                const distanceSq = direction.magSq() + size * size / 100 // smoothing factor
+                const force = body1.getMass() * body2.getMass() / Math.pow(distanceSq, 3/2)
+                body2.applyForce(multiply(direction, force))
+                body1.applyForce(multiply(direction, -1))
+            }
+
+            const forces = body1.getForce()
+            const acceleration = multiply(forces, 1 / body1.getMass())
+            const speed = Math.sqrt(acceleration.mag() * body1.getPosition().mag())
+
+            const angularVelocity = new p5.Vector(0, 1, 0)
+            const velocityDirection = body1.getPosition().copy().cross(angularVelocity)
+            velocityDirection.setMag(speed / 2)
+            body1.setVelocity(velocityDirection)
+
+            body1.resetForce()
+        }
+
         return bodies
     }
 }

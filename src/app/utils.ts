@@ -57,3 +57,14 @@ export function mixHues(body1: BodyHueMass, body2: BodyHueMass): number {
     }
     return (body1.hue * mass1 + body2.hue * mass2) / (mass1 + mass2)
 }
+
+  /**
+   * Multiplies the vector by the scalar in place.
+   * The built in p5.Vector.mult() function takes longer to execute than this one.
+   * @param vector
+   * @param scalar
+   * @private
+   */
+  export function multiply(vector: p5.Vector, scalar: number): p5.Vector {
+    return vector.set(vector.x * scalar, vector.y * scalar, vector.z * scalar)
+  }
