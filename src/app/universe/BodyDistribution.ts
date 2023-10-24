@@ -86,12 +86,30 @@ export class SphereBodyDistribution extends BodyDistribution {
                 .normalize()
                 .mult(size * getRandomGuassian())
             newBody.setPosition(initialPosition)
-            newBody.setVelocity(getRandomVectorInUnitSphere()
-                .normalize()
-                .mult(0.1 * getRandomGuassian())
-            )
             newBody.setMass(Math.abs(getRandomCauchy()))
             bodies.push(newBody)
+        }
+
+        // calculate potential energy of each body
+        for (let ii = 0; ii < totalBodies; ii++) {
+            const body1 = bodies[ii]
+            const body1Position = body1.getPosition()
+            let potentialEnergy = 0
+            for (let jj = 0; jj < totalBodies; jj++) {
+                if (ii === jj) {
+                    continue
+                }
+
+                const body2 = bodies[jj]
+                const body2Position = body2.getPosition()
+                const direction = body1Position.copy().sub(body2Position)
+                const distance = direction.mag()
+                potentialEnergy -= body1.getMass() * body2.getMass() / distance
+            }
+
+            const speed = Math.sqrt(2 * Math.abs(potentialEnergy) / body1.getMass())
+            // divide speed by 2 so that bodies don't escape to infinity
+            body1.setVelocity(getRandomVectorInUnitSphere().setMag(speed / 2))
         }
         return bodies
     }
