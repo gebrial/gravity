@@ -186,11 +186,12 @@ class Universe {
                 const body2Position = bodyPositions[j];
                 const body1 = this.bodies[i];
                 const body2 = this.bodies[j];
-                const distanceSq = tmp.set(body1Position).sub(body2Position).magSq();
-                const force = body1.getMass() * body2.getMass() / Math.pow(distanceSq, 3 / 2);
-                const direction = tmp;
-                body2.applyForce((0, utils_1.multiply)(direction, force));
-                body1.applyForce((0, utils_1.multiply)(direction, -1));
+                const direction = tmp.set(body1Position).sub(body2Position);
+                const distanceSq = direction.magSq();
+                const inverseDistanceCubed = 1 / Math.pow(distanceSq, 3 / 2);
+                const gravityScaledToMass = (0, utils_1.multiply)(direction, inverseDistanceCubed);
+                body2.addAcceleration((0, utils_1.multiply)(gravityScaledToMass.copy(), body1.getMass()));
+                body1.addAcceleration((0, utils_1.multiply)(gravityScaledToMass, -body2.getMass()));
             }
         }
         for (let i = 0; i < this.bodies.length; i++) {

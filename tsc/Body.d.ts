@@ -3,7 +3,7 @@ export default class Body {
     private mass;
     private position;
     private previousPosition;
-    private force;
+    private acceleration;
     private radius;
     private hue;
     /**
@@ -26,9 +26,9 @@ export default class Body {
     setMass(mass: number): void;
     getHue(): number;
     setHue(hue: number): void;
-    getForce(): p5.Vector;
-    applyForce(force: p5.Vector): void;
-    resetForce(): void;
+    resetAcceleration(): void;
+    addAcceleration(acceleration: p5.Vector): void;
+    getAcceleration(): p5.Vector;
     bodyStep(): void;
     draw(p: p5): void;
     getRadius(): number;

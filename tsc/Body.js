@@ -9,7 +9,7 @@ class Body {
         this.mass = 1;
         this.position = new p5_1.default.Vector();
         this.previousPosition = new p5_1.default.Vector();
-        this.force = new p5_1.default.Vector();
+        this.acceleration = new p5_1.default.Vector();
         this.radius = Math.pow(this.mass * 10, 1. / 3);
         this.hue = Math.random() * 256;
     }
@@ -59,21 +59,21 @@ class Body {
     setHue(hue) {
         this.hue = hue;
     }
-    getForce() {
-        return this.force.copy();
+    resetAcceleration() {
+        this.acceleration.set(0, 0, 0);
     }
-    applyForce(force) {
-        this.force.add(force);
+    addAcceleration(acceleration) {
+        this.acceleration.add(acceleration);
     }
-    resetForce() {
-        this.force.mult(0);
+    getAcceleration() {
+        return this.acceleration.copy();
     }
     bodyStep() {
-        const acceleration = this.force.div(this.mass);
+        const acceleration = this.acceleration.copy();
         const newPosition = acceleration.add(this.position.copy().mult(2)).sub(this.previousPosition);
         this.previousPosition.set(this.position);
         this.position.set(newPosition);
-        this.resetForce();
+        this.resetAcceleration();
     }
     draw(p) {
         p.push();
