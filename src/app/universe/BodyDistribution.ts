@@ -32,13 +32,11 @@ export class EllipsoidBodyDistribution extends BodyDistribution {
                 const body2Position = body2.getPosition()
                 const direction = body1Position.copy().sub(body2Position)
                 const distanceSq = direction.magSq() + size * size / 100 // smoothing factor
-                const force = body1.getMass() * body2.getMass() / Math.pow(distanceSq, 3/2)
-                body2.applyForce(multiply(direction, force))
-                body1.applyForce(multiply(direction, -1))
+                body2.addAcceleration(multiply(direction, body1.getMass() / Math.pow(distanceSq, 3/2)))
+                body1.addAcceleration(multiply(direction, -body2.getMass() / body1.getMass()))
             }
 
-            const forces = body1.getForce()
-            const acceleration = multiply(forces, 1 / body1.getMass())
+            const acceleration = body1.getAcceleration()
             const speed = Math.sqrt(acceleration.mag() * body1.getPosition().mag())
 
             const angularVelocity = new p5.Vector(0, 1, 0)
@@ -46,7 +44,7 @@ export class EllipsoidBodyDistribution extends BodyDistribution {
             velocityDirection.setMag(speed / 2)
             body1.setVelocity(velocityDirection)
 
-            body1.resetForce()
+            body1.resetAcceleration()
         }
 
         return bodies
@@ -107,8 +105,9 @@ export class SphereBodyDistribution extends BodyDistribution {
                 potentialEnergy -= body1.getMass() * body2.getMass() / distance
             }
 
+            // if we want to emulate a circular orbit, we should divide potential energy by 2, not speed
+            // https://openstax.org/books/university-physics-volume-1/pages/13-4-satellite-orbits-and-energy#fs-id1168328363439
             const speed = Math.sqrt(2 * Math.abs(potentialEnergy) / body1.getMass())
-            // divide speed by 2 so that bodies don't escape to infinity
             body1.setVelocity(getRandomVectorInUnitSphere().setMag(speed / 2))
         }
         return bodies

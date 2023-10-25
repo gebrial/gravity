@@ -6,7 +6,7 @@ export default class Body {
   private mass = 1
   private position: p5.Vector = new p5.Vector()
   private previousPosition: p5.Vector = new p5.Vector()
-  private force: p5.Vector = new p5.Vector()
+  private acceleration: p5.Vector = new p5.Vector()
   private radius = Math.pow(this.mass * 10, 1./3)
   private hue: number = Math.random() * 256
 
@@ -66,26 +66,26 @@ export default class Body {
     this.hue = hue
   }
 
-  public getForce(): p5.Vector {
-    return this.force.copy()
+  public resetAcceleration(): void {
+    this.acceleration.set(0, 0, 0)
   }
 
-  public applyForce(force: p5.Vector): void {
-    this.force.add(force)
+  public addAcceleration(acceleration: p5.Vector): void {
+    this.acceleration.add(acceleration)
   }
 
-  public resetForce(): void {
-    this.force.mult(0)
+  public getAcceleration(): p5.Vector {
+    return this.acceleration.copy()
   }
 
   public bodyStep(): void {
-    const acceleration = this.force.div(this.mass)
+    const acceleration = this.acceleration.copy()
     const newPosition = acceleration.add(
       this.position.copy().mult(2)
     ).sub(this.previousPosition)
     this.previousPosition.set(this.position)
     this.position.set(newPosition)
-    this.resetForce()
+    this.resetAcceleration()
   }
 
   public draw(p: p5): void {
