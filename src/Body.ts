@@ -5,7 +5,7 @@ import p5 from "p5"
 export default class Body {
   private mass = 1
   private position: p5.Vector = new p5.Vector()
-  private previousPosition: p5.Vector = new p5.Vector()
+  private velocity: p5.Vector = new p5.Vector()
   private acceleration: p5.Vector = new p5.Vector()
   private radius = Math.pow(this.mass * 10, 1./3)
   private hue: number = Math.random() * 256
@@ -38,15 +38,14 @@ export default class Body {
 
   public setPosition(position: p5.Vector): void {
     this.position = position.copy()
-    this.previousPosition = position.copy()
   }
 
   public getVelocity(): p5.Vector {
-    return this.position.copy().sub(this.previousPosition)
+    return this.velocity.copy()
   }
 
   public setVelocity(velocity: p5.Vector): void {
-    this.previousPosition = this.position.copy().sub(velocity)
+    this.velocity = velocity.copy()
   }
 
   public getMass(): number {
@@ -79,12 +78,8 @@ export default class Body {
   }
 
   public bodyStep(): void {
-    const acceleration = this.acceleration.copy()
-    const newPosition = acceleration.add(
-      this.position.copy().mult(2)
-    ).sub(this.previousPosition)
-    this.previousPosition.set(this.position)
-    this.position.set(newPosition)
+    this.position.add(this.velocity).add(this.acceleration)
+    this.velocity.add(this.acceleration)
     this.resetAcceleration()
   }
 
