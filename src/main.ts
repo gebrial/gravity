@@ -89,6 +89,7 @@ export const iterateUniverse = (): void => {
       const windowWidth = window.innerWidth
       const windowHeight = window.innerHeight
       p.createCanvas(windowWidth, windowHeight, p.WEBGL)
+      p.perspective(p.PI / 3.0, windowWidth / windowHeight, 0.1, 10000000)
 
       bodyCountSlider = new Slider(p, p.createSlider(1, 100))
       setBodyCountSliderAttributes()
