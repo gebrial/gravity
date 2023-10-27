@@ -1,6 +1,6 @@
 import p5 from "p5";
 import Body from "../Body";
-export declare class Octree {
+export default class Octree {
     private leaf;
     private children;
     private startCorner;

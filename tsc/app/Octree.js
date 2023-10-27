@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Octree = void 0;
 const tslib_1 = require("tslib");
 const p5_1 = (0, tslib_1.__importDefault)(require("p5"));
 const Body_1 = (0, tslib_1.__importDefault)(require("../Body"));
@@ -166,5 +165,5 @@ class Octree {
         return quotient > threshold;
     }
 }
-exports.Octree = Octree;
+exports.default = Octree;
 //# sourceMappingURL=Octree.js.map
