@@ -1,4 +1,4 @@
-import { Octree } from "./Universe"
+import Octree from "./app/Octree"
 import Body from "./Body"
 import p5 from "p5"
 import spyOn = jest.spyOn

@@ -1,7 +1,7 @@
 import p5 from "p5"
 import Body from "../Body"
 
-export class Octree {
+export default class Octree {
     private leaf: Body | undefined
     private children: Octree[] | undefined
     private startCorner: p5.Vector
