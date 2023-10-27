@@ -4,8 +4,10 @@ export interface UniverseInitializationOptions {
     totalBodies: number;
     size: number;
     bodyDistribution: BodyDistribution;
+    shouldMergeNearbyBodies: boolean;
 }
 export default class Universe {
+    private shouldMergeNearbyBodies;
     private bodies;
     constructor(options: UniverseInitializationOptions);
     /**
@@ -36,4 +38,5 @@ export default class Universe {
      */
     getPositionStandardDeviation(): number;
     getTotalMomentumVector(): p5.Vector;
+    getBodyCount(): number;
 }

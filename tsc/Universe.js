@@ -6,8 +6,11 @@ const p5_1 = (0, tslib_1.__importDefault)(require("p5"));
 const utils_1 = require("./app/utils");
 class Universe {
     constructor(options) {
+        var _a;
+        this.shouldMergeNearbyBodies = true;
         this.bodies = [];
         this.bodies = options.bodyDistribution.initializeBodies(options);
+        this.shouldMergeNearbyBodies = (_a = options.shouldMergeNearbyBodies) !== null && _a !== void 0 ? _a : true;
     }
     /**
      * Calculates the gravitational force between two bodies, applies the forces, and updates the positions.
@@ -75,7 +78,9 @@ class Universe {
         }
     }
     universeStep() {
-        this.checkAndMergeCollidingBodies(this.bodies.map(body => body.getPosition()));
+        if (this.shouldMergeNearbyBodies) {
+            this.checkAndMergeCollidingBodies(this.bodies.map(body => body.getPosition()));
+        }
         this.calculateAndApplyForces(this.bodies.map(body => body.getPosition()));
     }
     /**
@@ -142,6 +147,9 @@ class Universe {
             momentumVector.add(body.getVelocity().mult(body.getMass()));
         }
         return momentumVector;
+    }
+    getBodyCount() {
+        return this.bodies.length;
     }
 }
 exports.default = Universe;

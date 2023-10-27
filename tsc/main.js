@@ -64,6 +64,7 @@ function createNewUniverseIfRequired() {
         totalBodies: bodyCountSlider.numberValue(),
         size: size,
         bodyDistribution: bodyDistribution,
+        shouldMergeNearbyBodies: true,
     };
     universeRequiresReset = false;
     return new Universe_1.default(universeInitializationOptions);
