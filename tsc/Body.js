@@ -8,7 +8,7 @@ class Body {
     constructor() {
         this.mass = 1;
         this.position = new p5_1.default.Vector();
-        this.previousPosition = new p5_1.default.Vector();
+        this.velocity = new p5_1.default.Vector();
         this.acceleration = new p5_1.default.Vector();
         this.radius = Math.pow(this.mass * 10, 1. / 3);
         this.hue = Math.random() * 256;
@@ -38,13 +38,12 @@ class Body {
     }
     setPosition(position) {
         this.position = position.copy();
-        this.previousPosition = position.copy();
     }
     getVelocity() {
-        return this.position.copy().sub(this.previousPosition);
+        return this.velocity.copy();
     }
     setVelocity(velocity) {
-        this.previousPosition = this.position.copy().sub(velocity);
+        this.velocity = velocity.copy();
     }
     getMass() {
         return this.mass;
@@ -69,10 +68,8 @@ class Body {
         return this.acceleration.copy();
     }
     bodyStep() {
-        const acceleration = this.acceleration.copy();
-        const newPosition = acceleration.add(this.position.copy().mult(2)).sub(this.previousPosition);
-        this.previousPosition.set(this.position);
-        this.position.set(newPosition);
+        this.position.add(this.velocity).add(this.acceleration);
+        this.velocity.add(this.acceleration);
         this.resetAcceleration();
     }
     draw(p) {

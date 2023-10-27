@@ -2,7 +2,7 @@ import p5 from "p5";
 export default class Body {
     private mass;
     private position;
-    private previousPosition;
+    private velocity;
     private acceleration;
     private radius;
     private hue;
