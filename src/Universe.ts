@@ -7,12 +7,15 @@ export interface UniverseInitializationOptions {
   totalBodies: number
   size: number
   bodyDistribution: BodyDistribution
+  shouldMergeNearbyBodies: boolean
 }
 
 export default class Universe {
+  private shouldMergeNearbyBodies = true
   private bodies: Body[] = [];
   constructor(options: UniverseInitializationOptions) {
     this.bodies = options.bodyDistribution.initializeBodies(options)
+    this.shouldMergeNearbyBodies = options.shouldMergeNearbyBodies ?? true
   }
 
   /**
@@ -86,7 +89,9 @@ export default class Universe {
   }
 
   public universeStep(): void {
-    this.checkAndMergeCollidingBodies(this.bodies.map(body => body.getPosition()))
+    if (this.shouldMergeNearbyBodies) {
+      this.checkAndMergeCollidingBodies(this.bodies.map(body => body.getPosition()))
+    }
     this.calculateAndApplyForces(this.bodies.map(body => body.getPosition()))
   }
 
@@ -163,5 +168,9 @@ export default class Universe {
       momentumVector.add(body.getVelocity().mult(body.getMass()))
     }
     return momentumVector
+  }
+
+  public getBodyCount(): number {
+    return this.bodies.length
   }
 }

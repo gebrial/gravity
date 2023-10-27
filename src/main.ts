@@ -70,6 +70,7 @@ function createNewUniverseIfRequired(): Universe {
     totalBodies: bodyCountSlider.numberValue(),
     size: size,
     bodyDistribution: bodyDistribution,
+    shouldMergeNearbyBodies: true,
   }
   universeRequiresReset = false
   return new Universe(universeInitializationOptions)
