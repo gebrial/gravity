@@ -129,6 +129,19 @@ export class SolarSystemBodyDistribution extends BodyDistribution {
             body.setMass(bodyData.mass * MASS_SCALE)
             body.setPosition(new p5.Vector(...bodyData.position.map((v: number) => v * POSITION_SCALE)))
             body.setVelocity(new p5.Vector(...bodyData.velocity.map((v: number) => v * VELOCITY_SCALE)))
+            if (bodyData.color) {
+                // Convert hex color to HSB hue for p5
+                const hex = bodyData.color.replace('#', '')
+                const r = parseInt(hex.substring(0, 2), 16)
+                const g = parseInt(hex.substring(2, 4), 16)
+                const b = parseInt(hex.substring(4, 6), 16)
+                // p5 uses 0-255 for RGB, so we can use p5's color conversion
+                const tempP5 = new p5(() => {})
+                const c = tempP5.color(r, g, b)
+                tempP5.colorMode(tempP5.HSB)
+                const hue = tempP5.hue(c)
+                body.setHue(hue)
+            }
             bodies.push(body)
         }
         return bodies
