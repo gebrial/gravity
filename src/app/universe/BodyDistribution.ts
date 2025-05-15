@@ -114,36 +114,75 @@ export class SphereBodyDistribution extends BodyDistribution {
     }
 }
 
+function getOrbitalVelocity(
+    position: p5.Vector,
+    mass: number,
+    gravitationalConstant = 1,
+): p5.Vector {
+    const distance = position.mag()
+    return new p5.Vector(0, 0, 0)
+    // todo : check if this is correct
+
+    // check for zero distance to avoid division by zero
+    if (distance < Number.EPSILON) {
+        return new p5.Vector(0, 0, 0)
+    }
+
+    const velocityMagnitude = Math.sqrt((gravitationalConstant * mass) / distance)
+    let velocity = position.copy().normalize().mult(velocityMagnitude)
+    // rotate the velocity vector by 90 degrees
+    velocity = new p5.Vector(-velocity.y, velocity.x, velocity.z)
+    return velocity
+}
+
+function getHueFromHex(hex: string): number {
+    hex = hex.replace('#', '')
+    const r = parseInt(hex.substring(0, 2), 16)
+    const g = parseInt(hex.substring(2, 4), 16)
+    const b = parseInt(hex.substring(4, 6), 16)
+    // p5 uses 0-255 for RGB, so we can use p5's color conversion
+    const tempP5 = new p5(() => {})
+    const c = tempP5.color(r, g, b)
+    tempP5.colorMode(tempP5.HSB)
+    return tempP5.hue(c)
+}
+
+
 export class SolarSystemBodyDistribution extends BodyDistribution {
+    static MASS_SCALE = 1e-28
+    static POSITION_SCALE = 1 / 3e8
+
+    private static createBodyFromData(bodyData: any, _parentPostion?: p5.Vector, _parentVelocity?:p5.Vector): Body[] {
+        const body = new Body()
+        body.setMass(bodyData.mass * SolarSystemBodyDistribution.MASS_SCALE)
+
+        // todo: adjust position and velocity based on parent position and velocity
+        let position = new p5.Vector(...bodyData.position.map((v: number) => v * SolarSystemBodyDistribution.POSITION_SCALE))
+        body.setPosition(position)
+        body.setVelocity(getOrbitalVelocity(
+            position,
+            body.getMass(),
+        ))
+
+        if (bodyData.color) {
+            const hue = getHueFromHex(bodyData.color)
+            body.setHue(hue)
+        }
+
+        if (bodyData.planets) {
+            const planetBodies = bodyData.planets.flatMap((planetData: any) => SolarSystemBodyDistribution.createBodyFromData(planetData))
+            return [body, ...planetBodies]
+        }
+
+        return [body]
+    }
+
+
     public initializeBodies(_options: UniverseInitializationOptions): Body[] {
         // Load solar system data from JSON file
         // @ts-ignore
         const solarSystemData = require('../../solar_system_bodies.json')
-        const bodies: Body[] = []
-        // Scaling factors to bring values in line with other distributions
-        const MASS_SCALE = 1e-28
-        const POSITION_SCALE = 1 / 3e8
-        const VELOCITY_SCALE = 1 / 4.8e4
-        for (const bodyData of solarSystemData) {
-            const body = new Body()
-            body.setMass(bodyData.mass * MASS_SCALE)
-            body.setPosition(new p5.Vector(...bodyData.position.map((v: number) => v * POSITION_SCALE)))
-            body.setVelocity(new p5.Vector(...bodyData.velocity.map((v: number) => v * VELOCITY_SCALE)))
-            if (bodyData.color) {
-                // Convert hex color to HSB hue for p5
-                const hex = bodyData.color.replace('#', '')
-                const r = parseInt(hex.substring(0, 2), 16)
-                const g = parseInt(hex.substring(2, 4), 16)
-                const b = parseInt(hex.substring(4, 6), 16)
-                // p5 uses 0-255 for RGB, so we can use p5's color conversion
-                const tempP5 = new p5(() => {})
-                const c = tempP5.color(r, g, b)
-                tempP5.colorMode(tempP5.HSB)
-                const hue = tempP5.hue(c)
-                body.setHue(hue)
-            }
-            bodies.push(body)
-        }
+        let bodies: Body[] = SolarSystemBodyDistribution.createBodyFromData(solarSystemData[0])
         return bodies
     }
 }
