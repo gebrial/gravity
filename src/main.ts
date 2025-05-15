@@ -2,7 +2,13 @@ import p5 from "p5"
 import Slider from "./app/inputs/Slider"
 import Select from "./app/inputs/Select"
 import Universe, { UniverseInitializationOptions } from "./Universe"
-import { BodyDistribution, EllipsoidBodyDistribution, RingBodyDistribution, SphereBodyDistribution } from "./app/universe/BodyDistribution"
+import {
+  BodyDistribution,
+  EllipsoidBodyDistribution,
+  RingBodyDistribution,
+  SphereBodyDistribution,
+  SolarSystemBodyDistribution
+} from "./app/universe/BodyDistribution"
 
 let universeRequiresReset = true
 
@@ -32,6 +38,7 @@ function setInitialBodyDistributionSelectorAttributes(): void {
   initialBodyDistributionSelector.addOption("ellipsoid")
   initialBodyDistributionSelector.addOption("ring")
   initialBodyDistributionSelector.addOption("sphere")
+  initialBodyDistributionSelector.addOption("solar system")
 
   // todo: implement these
   initialBodyDistributionSelector.addOption("spiral")
@@ -53,6 +60,9 @@ function checkAndHandleInitialBodyDistributionSelectorChange(): void {
         break
       case "sphere":
         bodyDistribution = new SphereBodyDistribution()
+        break
+      case "solar system":
+        bodyDistribution = new SolarSystemBodyDistribution()
         break
       default:
         throw new Error(`Unknown body distribution: ${newBodyDistributionString}`)

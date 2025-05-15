@@ -113,3 +113,24 @@ export class SphereBodyDistribution extends BodyDistribution {
         return bodies
     }
 }
+
+export class SolarSystemBodyDistribution extends BodyDistribution {
+    public initializeBodies(_options: UniverseInitializationOptions): Body[] {
+        // Load solar system data from JSON file
+        // @ts-ignore
+        const solarSystemData = require('../../solar_system_bodies.json')
+        const bodies: Body[] = []
+        // Scaling factors to bring values in line with other distributions
+        const MASS_SCALE = 1e-28
+        const POSITION_SCALE = 1 / 3e8
+        const VELOCITY_SCALE = 1 / 4.8e4
+        for (const bodyData of solarSystemData) {
+            const body = new Body()
+            body.setMass(bodyData.mass * MASS_SCALE)
+            body.setPosition(new p5.Vector(...bodyData.position.map((v: number) => v * POSITION_SCALE)))
+            body.setVelocity(new p5.Vector(...bodyData.velocity.map((v: number) => v * VELOCITY_SCALE)))
+            bodies.push(body)
+        }
+        return bodies
+    }
+}
