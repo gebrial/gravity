@@ -1,14 +1,18 @@
 {
-  "name": "typescript-boilerplate-2021",
+  "name": "gravity",
   "version": "0.4.2",
-  "description": "Boilerplate for TypeScript projects (Node.js and browser modules)",
-  "author": "Chris Hager <chris@linuxuser.at>",
-  "repository": "https://github.com/metachris/typescript-boilerplate",
+  "description": "Interactive 3D n-body gravity simulation in the browser, with colliding bodies that merge and several initial mass distributions.",
+  "author": "Sanjaya Gebrial",
+  "repository": "https://github.com/gebrial/gravity",
   "license": "MIT",
   "keywords": [
-    "typescript",
-    "boilerplate",
-    "esbuild"
+    "gravity",
+    "n-body",
+    "simulation",
+    "physics",
+    "p5js",
+    "webgl",
+    "typescript"
   ],
   "main": "./dist/tsc/main.js",
   "types": "./dist/tsc/main.d.ts",
