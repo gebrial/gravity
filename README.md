@@ -1,128 +1,113 @@
-# TypeScript Boilerplate for 2021
+# Gravity
 
-[![Build and test status](https://github.com/metachris/typescript-boilerplate/workflows/Lint%20and%20test/badge.svg)](https://github.com/metachris/typescript-boilerplate/actions?query=workflow%3A%22Build+and+test%22)
+A real-time 3D n-body gravity simulation that runs in the browser. Hundreds of
+bodies attract each other, collide, and merge into larger ones. Each merged body
+takes a colour mixed from its parents.
 
-TypeScript project boilerplate with modern tooling, for Node.js programs, libraries and browser modules. Get started quickly and right-footed 🚀
+### [Try the live demo](https://www.gebrial.ca/gravity/)
 
-* [TypeScript 4](https://www.typescriptlang.org/)
-* Optionally [esbuild](https://esbuild.github.io/) to bundle for browsers (and Node.js)
-* Linting with [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) ([tslint](https://palantir.github.io/tslint/) is deprecated)
-* Testing with [Jest](https://jestjs.io/docs/getting-started) (and [ts-jest](https://www.npmjs.com/package/ts-jest))
-* Publishing to npm
-* Continuous integration ([GitHub Actions](https://docs.github.com/en/actions) / [GitLab CI](https://docs.gitlab.com/ee/ci/))
-* Automatic API documentation with [TypeDoc](https://typedoc.org/guides/doccomments/)
+[![Lint and test](https://github.com/gebrial/gravity/workflows/Lint%20and%20test/badge.svg)](https://github.com/gebrial/gravity/actions?query=workflow%3A%22Lint+and+test%22)
 
-See also the introduction blog post: **[Starting a TypeScript Project in 2021](https://www.metachris.com/2021/03/bootstrapping-a-typescript-node.js-project/)**.
+[![Gravity simulation](./assets/demo.gif)](https://www.gebrial.ca/gravity/)
 
+## Controls
 
-## Getting Started
+| Control | Effect |
+| --- | --- |
+| Drag | Orbit the camera |
+| Scroll | Zoom |
+| Body count slider | Number of bodies to simulate (1 to 1000) |
+| Distribution dropdown | Starting arrangement of the bodies |
+
+Changing either control restarts the simulation with a fresh universe.
+
+## Starting distributions
+
+- **Ellipsoid.** A cloud flattened along one axis, spun about that axis at a
+  speed taken from the gravitational field each body sits in, so the cloud
+  orbits instead of falling straight inward.
+- **Ring.** Bodies placed on a circle with a small random offset, starting at
+  rest.
+- **Sphere.** Radii drawn from a Gaussian and masses from a Cauchy distribution.
+  Each body's speed comes from its own gravitational potential energy.
+- **Solar system.** Real masses and orbital radii for the Sun and planets, read
+  from [`solar_system_bodies.json`](src/solar_system_bodies.json) and scaled
+  down to simulation units.
+
+Spiral and uniform distributions are listed but not implemented yet.
+
+## How it works
+
+Each frame advances the universe by one step.
+
+1. **Merge collisions.** Any two bodies closer than the sum of their radii
+   become one body. The merge is perfectly inelastic. Mass adds, position and
+   velocity are the mass-weighted averages of the two, and the lost kinetic
+   energy is discarded. Merging repeats until a pass finds no more collisions,
+   because a merged body can overlap a third.
+2. **Accumulate accelerations.** Every unordered pair contributes an equal and
+   opposite acceleration following an inverse-square law. Iterating over pairs
+   rather than over all ordered combinations halves the work.
+3. **Integrate.** Each body adds its accumulated acceleration to its velocity
+   and position, then clears the acceleration for the next frame.
+
+The camera tracks the system's centre of mass, so a cluster drifting across the
+scene stays in frame.
+
+Each body stores its colour as an HSB hue. A merge averages the two hues by
+mass, taking the shorter way around the colour wheel, so a red body and a violet
+body blend through red rather than through green. After a long run a body's hue
+is a rough record of which bodies it absorbed.
+
+### Barnes-Hut octree
+
+[`Octree.ts`](src/app/Octree.ts) implements the Barnes-Hut approximation. It
+subdivides space recursively and treats any cell far enough away relative to its
+size as a single point mass at that cell's centre of mass, which drops the force
+calculation from O(n²) to O(n log n). The octree is implemented and tested, but
+the simulation still runs the direct pairwise loop. Wiring it in is the next
+piece of work.
+
+## Running it locally
 
 ```bash
-# Clone the repository (you can also click "Use this template")
-git clone https://github.com/metachris/typescript-boilerplate.git your_project_name
-cd your_project_name
-
-# Edit `package.json` and `tsconfig.json` to your liking
-...
-
-# Install dependencies
 yarn install
-
-# Now you can run various yarn commands:
-yarn cli
-yarn lint
-yarn test
-yarn build-all
-yarn ts-node <filename>
-yarn esbuild-browser
-...
+yarn copy-html && yarn esbuild-browser:dev
 ```
 
-* Take a look at all the scripts in [`package.json`](https://github.com/metachris/typescript-boilerplate/blob/master/package.json)
-* For publishing to npm, use `yarn publish` (or `npm publish`)
+Then open `dist/index.html` in a browser. Use `yarn esbuild-browser:watch` to
+rebuild on save.
 
-## esbuild
-
-[esbuild](https://esbuild.github.io/) is an extremely fast bundler that supports a [large part of the TypeScript syntax](https://esbuild.github.io/content-types/#typescript). This project uses it to bundle for browsers (and Node.js if you want).
+Other commands:
 
 ```bash
-# Build for browsers
-yarn esbuild-browser:dev
-yarn esbuild-browser:watch
-
-# Build the cli for node
-yarn esbuild-node:dev
-yarn esbuild-node:watch
+yarn test          # jest
+yarn lint          # eslint
+yarn build-all     # clean tsc + esbuild build into dist/
+yarn docs          # typedoc API docs into docs/
 ```
 
-You can generate a full clean build with `yarn build-all` (which uses both `tsc` and `esbuild`).
+## Layout
 
-* `package.json` includes `scripts` for various esbuild commands: [see here](https://github.com/metachris/typescript-boilerplate/blob/master/package.json#L23)
-* `esbuild` has a `--global-name=xyz` flag, to store the exports from the entry point in a global variable. See also the [esbuild "Global name" docs](https://esbuild.github.io/api/#global-name).
-* Read more about the esbuild setup [here](https://www.metachris.com/2021/04/starting-a-typescript-project-in-2021/#esbuild).
-* esbuild for the browser uses the IIFE (immediately-invoked function expression) format, which executes the bundled code on load (see also https://github.com/evanw/esbuild/issues/29)
-
-
-## Tests with Jest
-
-You can write [Jest tests](https://jestjs.io/docs/getting-started) [like this](https://github.com/metachris/typescript-boilerplate/blob/master/src/main.test.ts):
-
-```typescript
-import { greet } from './main'
-
-test('the data is peanut butter', () => {
-  expect(1).toBe(1)
-});
-
-test('greeting', () => {
-  expect(greet('Foo')).toBe('Hello Foo')
-});
+```
+src/
+  Body.ts                            a single point mass: state, physics, rendering
+  Universe.ts                        the simulation step, collisions, merging
+  app/Octree.ts                      Barnes-Hut octree (not yet wired in)
+  app/universe/BodyDistribution.ts   the starting arrangements
+  app/inputs/                        thin wrappers over p5 sliders and selects
+  solar_system_bodies.json           real masses and orbital radii
+test/                                jest tests
 ```
 
-Run the tests with `yarn test`, no separate compile step is necessary.
+## Built with
 
-* See also the [Jest documentation](https://jestjs.io/docs/getting-started).
-* The tests can be automatically run in CI (GitHub Actions, GitLab CI): [`.github/workflows/lint-and-test.yml`](https://github.com/metachris/typescript-boilerplate/blob/master/.github/workflows/lint-and-test.yml), [`.gitlab-ci.yml`](https://github.com/metachris/typescript-boilerplate/blob/master/.gitlab-ci.yml)
-* Take a look at other modern test runners such as [ava](https://github.com/avajs/ava), [uvu](https://github.com/lukeed/uvu) and [tape](https://github.com/substack/tape)
+[TypeScript](https://www.typescriptlang.org/), [p5.js](https://p5js.org/) in
+WebGL mode for rendering, [esbuild](https://esbuild.github.io/) for bundling,
+and [Jest](https://jestjs.io/) for tests.
+[`deploy-gh-pages.yml`](.github/workflows/deploy-gh-pages.yml) deploys to GitHub
+Pages on every push to `master`.
 
-## Documentation, published with CI
+## License
 
-You can auto-generate API documentation from the TyoeScript source files using [TypeDoc](https://typedoc.org/guides/doccomments/). The generated documentation can be published to GitHub / GitLab pages through the CI.
-
-Generate the documentation, using `src/main.ts` as entrypoint (configured in package.json):
-
-```bash
-yarn docs
-```
-
-The resulting HTML is saved in `docs/`.
-
-You can publish the documentation through CI:
-* [GitHub pages](https://pages.github.com/): See [`.github/workflows/deploy-gh-pages.yml`](https://github.com/metachris/typescript-boilerplate/blob/master/.github/workflows/deploy-gh-pages.yml)
-* [GitLab pages](https://docs.gitlab.com/ee/user/project/pages/): [`.gitlab-ci.yml`](https://github.com/metachris/typescript-boilerplate/blob/master/.gitlab-ci.yml)
-
-This is the documentation for this boilerplate project: https://metachris.github.io/typescript-boilerplate/
-
-## References
-
-* **[Blog post: Starting a TypeScript Project in 2021](https://www.metachris.com/2021/03/bootstrapping-a-typescript-node.js-project/)**
-* [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-* [tsconfig docs](https://www.typescriptlang.org/tsconfig)
-* [esbuild docs](https://esbuild.github.io/)
-* [typescript-eslint docs](https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/README.md)
-* [Jest docs](https://jestjs.io/docs/getting-started)
-* [GitHub Actions](https://docs.github.com/en/actions), [GitLab CI](https://docs.gitlab.com/ee/ci/)
-
-
-## Feedback
-
-Reach out with feedback and ideas:
-
-* [twitter.com/metachris](https://twitter.com/metachris)
-* [Create a new issue](https://github.com/metachris/typescript-boilerplate/issues)
-
-## gh-pages
-
-gh-pages configuration helped by this resource:
-https://fedeantuna.github.io/article/deploy-nextjs-app-to-github-pages
-
+MIT
