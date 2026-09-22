@@ -1,5 +1,5 @@
-import Octree from "./app/Octree"
-import Body from "./Body"
+import Octree from "../src/app/Octree"
+import Body from "../src/Body"
 import p5 from "p5"
 import spyOn = jest.spyOn
 
