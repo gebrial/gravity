@@ -2,6 +2,7 @@ import p5 from "p5"
 import { UniverseInitializationOptions } from "../../Universe"
 import { getRandomCauchy, getRandomGuassian, getRandomVectorInUnitSphere, multiply } from "../utils"
 import Body from "../../Body"
+import solarSystemData from "../../solar_system_bodies.json"
 
 export abstract class BodyDistribution {
     public abstract initializeBodies(options: UniverseInitializationOptions): Body[]
@@ -137,14 +138,23 @@ function getOrbitalVelocity(
 
 function getHueFromHex(hex: string): number {
     hex = hex.replace('#', '')
-    const r = parseInt(hex.substring(0, 2), 16)
-    const g = parseInt(hex.substring(2, 4), 16)
-    const b = parseInt(hex.substring(4, 6), 16)
-    // p5 uses 0-255 for RGB, so we can use p5's color conversion
-    const tempP5 = new p5(() => {})
-    const c = tempP5.color(r, g, b)
-    tempP5.colorMode(tempP5.HSB)
-    return tempP5.hue(c)
+    const r = parseInt(hex.substring(0, 2), 16) / 255
+    const g = parseInt(hex.substring(2, 4), 16) / 255
+    const b = parseInt(hex.substring(4, 6), 16) / 255
+    const max = Math.max(r, g, b)
+    const chroma = max - Math.min(r, g, b)
+    if (chroma === 0) {
+        return 0
+    }
+    let hue: number
+    if (max === r) {
+        hue = ((g - b) / chroma) % 6
+    } else if (max === g) {
+        hue = (b - r) / chroma + 2
+    } else {
+        hue = (r - g) / chroma + 4
+    }
+    return ((hue * 60) + 360) % 360
 }
 
 
@@ -157,7 +167,7 @@ export class SolarSystemBodyDistribution extends BodyDistribution {
         body.setMass(bodyData.mass * SolarSystemBodyDistribution.MASS_SCALE)
 
         // todo: adjust position and velocity based on parent position and velocity
-        let position = new p5.Vector(...bodyData.position.map((v: number) => v * SolarSystemBodyDistribution.POSITION_SCALE))
+        const position = new p5.Vector(...bodyData.position.map((v: number) => v * SolarSystemBodyDistribution.POSITION_SCALE))
         body.setPosition(position)
         body.setVelocity(getOrbitalVelocity(
             position,
@@ -179,10 +189,6 @@ export class SolarSystemBodyDistribution extends BodyDistribution {
 
 
     public initializeBodies(_options: UniverseInitializationOptions): Body[] {
-        // Load solar system data from JSON file
-        // @ts-ignore
-        const solarSystemData = require('../../solar_system_bodies.json')
-        let bodies: Body[] = SolarSystemBodyDistribution.createBodyFromData(solarSystemData[0])
-        return bodies
+        return SolarSystemBodyDistribution.createBodyFromData(solarSystemData[0])
     }
 }
