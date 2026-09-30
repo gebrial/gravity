@@ -11,10 +11,10 @@ jobs:
         nodejs: [18]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v5
 
     # https://github.com/actions/setup-node
-    - uses: actions/setup-node@v2-beta
+    - uses: actions/setup-node@v5
       with:
         node-version: ${{ matrix.nodejs }}
 
