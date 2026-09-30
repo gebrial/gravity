@@ -1,0 +1,76 @@
+[
+    {
+        "name": "Sun",
+        "mass": 1.9885e30,
+        "radius": 6.9634e8,
+        "position": [0, 0, 0],
+        "velocity": [0, 0, 0],
+        "color": "#FFD700",
+        "planets": [
+            {
+                "name": "Mercury",
+                "mass": 3.3011e23,
+                "radius": 2.4397e6,
+                "position": [5.791e10, 0, 0],
+                "velocity": [0, 4.79e4, 0],
+                "color": "#b1b1b1"
+            },
+            {
+                "name": "Venus",
+                "mass": 4.8675e24,
+                "radius": 6.0518e6,
+                "position": [1.082e11, 0, 0],
+                "velocity": [0, 3.5e4, 0],
+                "color": "#e6e2af"
+            },
+            {
+                "name": "Earth",
+                "mass": 5.97237e24,
+                "radius": 6.371e6,
+                "position": [1.496e11, 0, 0],
+                "velocity": [0, 2.98e4, 0],
+                "color": "#2e5cb8"
+            },
+            {
+                "name": "Mars",
+                "mass": 6.4171e23,
+                "radius": 3.3895e6,
+                "position": [2.279e11, 0, 0],
+                "velocity": [0, 2.41e4, 0],
+                "color": "#b22222"
+            },
+            {
+                "name": "Jupiter",
+                "mass": 1.8982e27,
+                "radius": 6.9911e7,
+                "position": [7.785e11, 0, 0],
+                "velocity": [0, 1.31e4, 0],
+                "color": "#f4e2d8"
+            },
+            {
+                "name": "Saturn",
+                "mass": 5.6834e26,
+                "radius": 5.8232e7,
+                "position": [1.433e12, 0, 0],
+                "velocity": [0, 9.7e3, 0],
+                "color": "#f5deb3"
+            },
+            {
+                "name": "Uranus",
+                "mass": 8.6810e25,
+                "radius": 2.5362e7,
+                "position": [2.877e12, 0, 0],
+                "velocity": [0, 6.8e3, 0],
+                "color": "#b0e0e6"
+            },
+            {
+                "name": "Neptune",
+                "mass": 1.02413e26,
+                "radius": 2.4622e7,
+                "position": [4.503e12, 0, 0],
+                "velocity": [0, 5.4e3, 0],
+                "color": "#4166f5"
+            }
+        ]
+    }
+]

@@ -12,3 +12,9 @@ export declare class RingBodyDistribution extends BodyDistribution {
 export declare class SphereBodyDistribution extends BodyDistribution {
     initializeBodies(options: UniverseInitializationOptions): Body[];
 }
+export declare class SolarSystemBodyDistribution extends BodyDistribution {
+    static MASS_SCALE: number;
+    static POSITION_SCALE: number;
+    private static createBodyFromData;
+    initializeBodies(_options: UniverseInitializationOptions): Body[];
+}

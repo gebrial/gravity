@@ -30,6 +30,7 @@ function setInitialBodyDistributionSelectorAttributes() {
     initialBodyDistributionSelector.addOption("ellipsoid");
     initialBodyDistributionSelector.addOption("ring");
     initialBodyDistributionSelector.addOption("sphere");
+    initialBodyDistributionSelector.addOption("solar system");
     // todo: implement these
     initialBodyDistributionSelector.addOption("spiral");
     initialBodyDistributionSelector.disableOption("spiral");
@@ -49,6 +50,9 @@ function checkAndHandleInitialBodyDistributionSelectorChange() {
                 break;
             case "sphere":
                 bodyDistribution = new BodyDistribution_1.SphereBodyDistribution();
+                break;
+            case "solar system":
+                bodyDistribution = new BodyDistribution_1.SolarSystemBodyDistribution();
                 break;
             default:
                 throw new Error(`Unknown body distribution: ${newBodyDistributionString}`);
